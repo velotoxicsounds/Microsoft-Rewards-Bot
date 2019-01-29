@@ -24,7 +24,9 @@ This program will automatically complete search requests and quizzes on Microsof
 - Python 3.6
 - Requests 2.21.0
 - Selenium 3.14.0
-- Geckodriver for Selenium 
+
+- Chrome Browser 
+- Chromedriver for Selenium 2.45 (special download - see below)
 
 <h2>HOW TO USE</h2> 
 
@@ -41,8 +43,8 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Script by will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Run time for one account is under 5 minutes, for 100% daily completion 
-	- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
-4a. For completing points from email links:
+	- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`  
+5. For completing points from email links:
 	- Modify email_links.txt file with email links.
 		- Copy and paste links without surrounding quotes, each on individual line, like such:
 
@@ -53,20 +55,29 @@ This program will automatically complete search requests and quizzes on Microsof
 	- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
 	- **Script will be manual, requires key press to continue, as the quizzes are not yet standardized.**
 	 
-5. Crontab (Optional for automated script daily on linux)  
+6. Crontab (Optional for automated script daily on linux)  
 	- Enter in terminal: `crontab -e`
 	- Enter in terminal: `0 12 * * * /path/to/python /path/to/ms_rewards.py --headless --mobile --pc --quiz`
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
 	- Change the paths to the json in the .py file to appropriate path
 
-NOTE: If geckodriver for selenium is missing:
 
-General Instructions (Windows, Linux, OS X)
-1. download [geckodriver here](https://github.com/mozilla/geckodriver)
+General Instructions for installing Chromedriver (Windows, Linux, OS X)
+1. download [chromedriver here](http://chromedriver.chromium.org/downloads)
 2. extract to python parent directory e.g. 'C:\Python37-22'
+3. ensure the python directory is in path (environment variables for windows users)  
 
-Or if on OS X/Linux
-1. `brew install geckodriver`
+Alternatively,  
+if on OS X:
+1. `brew install chromedriver`    
+  
+if on Linux:
+1. Download chromedriver from link above.
+2. Download and extract to python directory (e.g. to /usr/local/bin)
+3. Enable permissions:  
+`sudo chown root:root /usr/local/bin/chromedriver`  
+`sudo chmod 0755 /usr/local/bin/chromedriver`
+4. Comment out Windows/MacOSx chromedriver path on line 138, uncomment line 141 for Linux support.
 
 
 <h2>TO DO</h2>
@@ -87,6 +98,14 @@ Or if on OS X/Linux
 
 <h2>Versions</h2>  
 
+**2019.01**  
+
+    - Migrated to chrome/chromedriver 
+	    - Immediate improvement in speed and stability over firefox/geckodriver
+	    - Appears to use less RAM than firefox (suprisingly..)
+	    - May be possible to run on raspberrypi (rpi has chromedriver)
+	- Mitigated credits2 error by performing an action before going to search URL
+	
 **2018.04**  
 
     - Performance improvements
@@ -115,4 +134,7 @@ Or if on OS X/Linux
 **2018.01**
 
 	- Initial release
-	- Basic functionality for completing searches and quizzes.
+	- Basic functionality for completing searches and quizzes.  
+
+<h4>Special Thanks</h4>
+@ShoGinn - for extraordinary assistance in making this project better!

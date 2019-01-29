@@ -1,19 +1,10 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2018.03
+# Version 2019.01
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
-
 # FIXME mobile version does not require re-sign in, but pc version does, why?
 # FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
-
-"""
-- Fixed login, now waits until page is fully loaded
-- Replaced urllib api call with requests
-- Updated get points with chrome extension source, less prone to error (credit to Shoginn for the url!)
-- Updated quizzes to log open quiz offers, completed quiz offers, all points
-- Modified error catching for alerts, combined with timeoutexception
-"""
 
 import os
 import argparse
@@ -29,16 +20,15 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, TimeoutException, \
     ElementClickInterceptedException, ElementNotVisibleException, \
     ElementNotInteractableException, NoSuchElementException, UnexpectedAlertPresentException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 # URLs
-BING_SEARCH_URL = 'https://www.bing.com'
+BING_SEARCH_URL = 'https://www.bing.com/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/dashboard'
 POINT_TOTAL_URL = 'http://www.bing.com/rewardsapp/bepflyoutpage?style=chromeextension'
 
@@ -46,7 +36,6 @@ POINT_TOTAL_URL = 'http://www.bing.com/rewardsapp/bepflyoutpage?style=chromeexte
 PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                  'AppleWebKit/537.36 (KHTML, like Gecko) '
                  'Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-
 MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
                      'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
                      'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
@@ -80,13 +69,14 @@ def parse_args():
     return arg_parser.parse_args()
 
 
-def get_dates():
+def get_dates(days_to_get=4):
     """
     Returns a list of dates from today to 3 days ago in year, month, day format
+    :param days_to_get: # of days to get from api
     :return: list of string of dates in year, month, day format
     """
     dates = []
-    for i in range(0, 2):
+    for i in range(0, days_to_get):
         # get dates
         date = datetime.now() - timedelta(days=i)
         # append in year month date format
@@ -131,21 +121,26 @@ def get_login_info():
 
 def browser_setup(headless_mode, user_agent):
     """
-    Inits the firefox browser with headless setting and user agent
+    Inits the chrome browser with headless setting and user agent
     :param headless_mode: Boolean
     :param user_agent: String
     :return: webdriver obj
     """
     options = Options()
-    options.headless = headless_mode
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference('general.useragent.override', user_agent)
-    # experimental disable notifications
-    profile.set_preference('dom.webnotifications.serviceworker.enabled', False)
-    profile.set_preference('dom.webnotifications.enabled', False)
-    profile.set_preference('geo.enabled', False)
-    firefox_browser_obj = webdriver.Firefox(options=options, firefox_profile=profile)
-    return firefox_browser_obj
+    if headless_mode:
+        options.add_argument('--headless')
+
+    options.add_argument(f'user-agent={user_agent}')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+
+    "Windows, MacOS"
+    chrome_obj = webdriver.Chrome(chrome_options=options)
+
+    "Linux"
+    # chrome_obj = webdriver.Chrome(executable_path=r'/usr/local/bin/chromedriver', chrome_options=options)
+
+    return chrome_obj
 
 
 def log_in(email_address, pass_word):
@@ -217,10 +212,16 @@ def wait_until_visible(by_, selector, time_to_wait=10):
     """
     try:
         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
-    except (TimeoutException, UnexpectedAlertPresentException):
+    except TimeoutException:
         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
         screenshot(selector)
         browser.refresh()
+    except UnexpectedAlertPresentException:
+        # FIXME
+        browser.switch_to.alert.dismiss()
+        # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+        # screenshot(selector)
+        # browser.refresh()
     except WebDriverException:
         logging.exception(msg=f'Webdriver Error for {selector} object')
         screenshot(selector)
@@ -237,10 +238,16 @@ def wait_until_clickable(by_, selector, time_to_wait=10):
     """
     try:
         WebDriverWait(browser, time_to_wait).until(ec.element_to_be_clickable((by_, selector)))
-    except (TimeoutException, UnexpectedAlertPresentException):
+    except TimeoutException:
         logging.exception(msg=f'{selector} element Not clickable - Timeout Exception', exc_info=False)
         screenshot(selector)
         browser.refresh()
+    except UnexpectedAlertPresentException:
+        # FIXME
+        browser.switch_to.alert.dismiss()
+        # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+        # screenshot(selector)
+        # browser.refresh()
     except WebDriverException:
         logging.exception(msg=f'Webdriver Error for {selector} object')
         screenshot(selector)
@@ -415,8 +422,10 @@ def search(search_terms, mobile_search=False):
                             return
                         browser.get(BING_SEARCH_URL)
             except UnexpectedAlertPresentException:
+                # FIXME
+                browser.switch_to.alert.dismiss()
                 # this captures alerts such as bing asking for location information for certain search terms
-                logging.info(msg='Unexpected alert during search, returning to search URL')
+                # logging.info(msg='Unexpected alert during search, returning to search URL')
                 browser.get(BING_SEARCH_URL)
 
 
@@ -611,7 +620,14 @@ def get_point_total(pc=False, mobile=False, log=False):
     # get number of total number of points
     time.sleep(0.1)
     try:
-        wait_until_visible(By.CLASS_NAME, 'credits2', 15)
+        # New wait for checking for credits2, sometimes bing does not show page properly, will move to own function
+        start_time = time.time()
+        while True:
+            if browser.find_elements_by_class_name('credits2'):
+                break
+            else:
+                if time.time() - start_time > 15:  # hardcoded for now
+                    return False
         # get total points, capped to current item on wishlist
         current_point_total = list(map(int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
         # get pc points
@@ -685,9 +701,9 @@ if __name__ == '__main__':
     try:
         # start logging
         init_logging()
-        logging.info(msg='---------------------------------')
-        logging.info(msg='--------------New----------------')
-        logging.info(msg='---------------------------------')
+        logging.info(msg='--------------------------------------------------')
+        logging.info(msg='-----------------------New------------------------')
+        logging.info(msg='--------------------------------------------------')
 
         # argparse
         parser = parse_args()
@@ -716,11 +732,12 @@ if __name__ == '__main__':
 
             if parser.mobile_mode:
                 # MOBILE MODE
-                logging.info(msg='***************MOBILE***************')
+                logging.info(msg='-------------------------MOBILE-------------------------')
                 # set up headless browser and mobile user agent
                 browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
                 try:
                     log_in(email, password)
+                    browser.get(DASHBOARD_URL) # FIXME!!
                     browser.get(BING_SEARCH_URL)
                     # mobile search
                     search(search_list, mobile_search=True)
@@ -736,11 +753,12 @@ if __name__ == '__main__':
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
-                logging.info(msg='***************PC***************')
+                logging.info(msg='-------------------------PC-------------------------')
                 # set up edge headless browser and edge pc user agent
                 browser = browser_setup(parser.headless_setting, PC_USER_AGENT)
                 try:
                     log_in(email, password)
+                    browser.get(DASHBOARD_URL)  # FIXME!!
                     if parser.pc_mode:
                         browser.get(BING_SEARCH_URL)
                         # pc edge search
@@ -759,6 +777,6 @@ if __name__ == '__main__':
                     logging.error(msg=f'WebDriverException while executing pc portion', exc_info=True)
                 finally:
                     browser.quit()
-            logging.info(msg='\n\n')
+            # logging.info(msg='\n\n')
     except WebDriverException:
         logging.exception(msg='Failure at main()')
