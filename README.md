@@ -98,6 +98,10 @@ if on Linux:
 
 <h2>Versions</h2>  
 
+**2019.01.01**  
+
+    - Error handling for 'credits2', function should exit and script should continue to execute.
+
 **2019.01**  
 
     - Migrated to chrome/chromedriver 

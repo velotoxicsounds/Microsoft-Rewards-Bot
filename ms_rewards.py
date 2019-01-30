@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.01
+# Version 2019.01.01
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -629,6 +629,10 @@ def get_point_total(pc=False, mobile=False, log=False):
                 if time.time() - start_time > 15:  # hardcoded for now
                     return False
         # get total points, capped to current item on wishlist
+    except (NoSuchElementException, TimeoutException):
+        return False
+
+    try:
         current_point_total = list(map(int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
         # get pc points
         current_pc_points, max_pc_points = map(int, browser.find_element_by_class_name('pcsearch').text.split('/'))
@@ -638,25 +642,27 @@ def get_point_total(pc=False, mobile=False, log=False):
         # get edge points
         current_edge_points, max_edge_points = map(int,
                                                    browser.find_element_by_class_name('edgesearch').text.split('/'))
-        # if log flag is provided, log the point totals
-        if log:
-            logging.info(msg=f'Total points = {current_point_total}')
-            logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-            logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
-            logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
-
-        # if pc flag, check if pc and edge points met
-        if pc:
-            if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
-                return False
-            return True
-        # if mobile flag, check if mobile points met
-        if mobile:
-            if current_mobile_points < max_mobile_points:
-                return False
-            return True
-    except (NoSuchElementException, TimeoutException):
+    except ValueError as e:
         return False
+
+    # if log flag is provided, log the point totals
+    if log:
+        logging.info(msg=f'Total points = {current_point_total}')
+        logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
+        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
+        logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
+
+    # if pc flag, check if pc and edge points met
+    if pc:
+        if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+            return False
+        return True
+    # if mobile flag, check if mobile points met
+    if mobile:
+        if current_mobile_points < max_mobile_points:
+            return False
+        return True
+
 
 
 def get_email_links():
