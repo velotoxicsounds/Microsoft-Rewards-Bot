@@ -26,7 +26,6 @@ This program will automatically complete search requests and quizzes on Microsof
 - Selenium 3.14.0
 
 - Chrome Browser 
-- Chromedriver for Selenium 2.45 (special download - see below)
 
 <h2>HOW TO USE</h2> 
 
@@ -61,25 +60,6 @@ This program will automatically complete search requests and quizzes on Microsof
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
 	- Change the paths to the json in the .py file to appropriate path
 
-
-General Instructions for installing Chromedriver (Windows, Linux, OS X)
-1. download [chromedriver here](http://chromedriver.chromium.org/downloads)
-2. extract to python parent directory e.g. 'C:\Python37-22'
-3. ensure the python directory is in path (environment variables for windows users)  
-
-Alternatively,  
-if on OS X:
-1. `brew install chromedriver`    
-  
-if on Linux:
-1. Download chromedriver from link above.
-2. Download and extract to python directory (e.g. to /usr/local/bin)
-3. Enable permissions:  
-`sudo chown root:root /usr/local/bin/chromedriver`  
-`sudo chmod 0755 /usr/local/bin/chromedriver`
-4. Comment out Windows/MacOSx chromedriver path on line 138, uncomment line 141 for Linux support.
-
-
 <h2>TO DO</h2>
 
 - Argparse for options:
@@ -97,6 +77,10 @@ if on Linux:
 
 
 <h2>Versions</h2>  
+
+**2019.02**
+
+    - Added chromedriver auto-downloading
 
 **2019.01.01**  
 
