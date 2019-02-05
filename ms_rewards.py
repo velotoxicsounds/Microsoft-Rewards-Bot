@@ -6,12 +6,15 @@
 # FIXME mobile version does not require re-sign in, but pc version does, why?
 # FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
 
-import os
 import argparse
 import json
-import time
-import random
 import logging
+import os
+import platform
+import random
+import re
+import time
+import zipfile
 from _datetime import datetime, timedelta
 
 import requests
@@ -20,12 +23,12 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, TimeoutException, \
     ElementClickInterceptedException, ElementNotVisibleException, \
     ElementNotInteractableException, NoSuchElementException, UnexpectedAlertPresentException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 
 # URLs
 BING_SEARCH_URL = 'https://www.bing.com/search'
@@ -120,6 +123,38 @@ def get_login_info():
         return json.load(f)
 
 
+def download_driver(driver_path, system):
+    # determine latest chromedriver version
+    url = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+    r = requests.get(url)
+    latest_version = r.text
+    if system == "Windows":
+        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_win32.zip".format(latest_version)
+    elif system == "Darwin":
+        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_mac64.zip".format(latest_version)
+    elif system == "Linux":
+        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip".format(latest_version)
+
+    response = requests.get(url, stream=True)
+    zip_file_path = os.path.join(os.path.dirname(driver_path), os.path.basename(url))
+    with open(zip_file_path, "wb") as handle:
+        for chunk in response.iter_content(chunk_size=512):
+            if chunk:  # filter out keep alive chunks
+                handle.write(chunk)
+    extracted_dir = os.path.splitext(zip_file_path)[0]
+    with zipfile.ZipFile(zip_file_path, "r") as zip_file:
+        zip_file.extractall(extracted_dir)
+    os.remove(zip_file_path)
+
+    driver = os.listdir(extracted_dir)[0]
+    os.rename(os.path.join(extracted_dir, driver), driver_path)
+    os.rmdir(extracted_dir)
+
+    os.chmod(driver_path, 0o755)
+    # way to note which chromedriver version is installed
+    open(os.path.join(os.path.dirname(driver_path), "{}.txt".format(latest_version)), "w").close()
+
+
 def browser_setup(headless_mode, user_agent):
     """
     Inits the chrome browser with headless setting and user agent
@@ -127,6 +162,15 @@ def browser_setup(headless_mode, user_agent):
     :param user_agent: String
     :return: webdriver obj
     """
+    os.makedirs('drivers', exist_ok=True)
+    path = os.path.join('drivers', 'chromedriver')
+    system = platform.system()
+    if system == "Windows":
+        if not path.endswith(".exe"):
+            path += ".exe"
+    if not os.path.exists(path):
+        download_driver(path, system)
+
     options = Options()
     if headless_mode:
         options.add_argument('--headless')
@@ -135,11 +179,7 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
-    "Windows, MacOS"
-    chrome_obj = webdriver.Chrome(chrome_options=options)
-
-    "Linux"
-    # chrome_obj = webdriver.Chrome(executable_path=r'/usr/local/bin/chromedriver', chrome_options=options)
+    chrome_obj = webdriver.Chrome(path, chrome_options=options)
 
     return chrome_obj
 
@@ -613,20 +653,9 @@ def get_point_total(pc=False, mobile=False, log=False):
     """
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
-    time.sleep(0.1)
-    try:
-        # New wait for checking for credits2, sometimes bing does not show page properly, will move to own function
-        start_time = time.time()
-        while True:
-            if browser.find_elements_by_class_name('credits2'):
-                break
-            else:
-                if time.time() - start_time > 15:  # hardcoded for now
-                    return False
-        # get total points, capped to current item on wishlist
-    except (NoSuchElementException, TimeoutException):
-        return False
-
+    wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)
+    pcsearch = browser.find_element_by_class_name('pcsearch')
+    pcsearch.location_once_scrolled_into_view
     try:
         current_point_total = list(map(
             int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
