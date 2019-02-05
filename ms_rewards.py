@@ -104,7 +104,8 @@ def get_search_terms():
             logging.error('Error retrieving google trends json.')
         except KeyError:
             logging.error('Cannot parse, JSON keys are modified.')
-    # get unique terms, return an enumerated list
+    # get unique terms, shuffle, return an enumerated list
+    random.shuffle(search_terms)
     search_terms = set(search_terms)
     logging.info(msg=f'# of search items: {len(search_terms)}\n')
     return list(enumerate(search_terms, start=0))
@@ -422,10 +423,7 @@ def search(search_terms, mobile_search=False):
                             return
                         browser.get(BING_SEARCH_URL)
             except UnexpectedAlertPresentException:
-                # FIXME
                 browser.switch_to.alert.dismiss()
-                # this captures alerts such as bing asking for location information for certain search terms
-                # logging.info(msg='Unexpected alert during search, returning to search URL')
                 browser.get(BING_SEARCH_URL)
 
 
@@ -436,9 +434,6 @@ def iter_dailies():
     """
     browser.get(DASHBOARD_URL)
     time.sleep(4)
-    # TODO there is an error here where the object cannot be converted to data, only happens on digital ocean
-    #   may be related to a wait after a sleep.
-    #   stack overflow states that it is likely related to ram, need 2gb over 1gb.
     open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
     if open_offers:
         logging.info(msg=f'Number of incomplete offers: {len(open_offers)}')
@@ -633,16 +628,18 @@ def get_point_total(pc=False, mobile=False, log=False):
         return False
 
     try:
-        current_point_total = list(map(int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
+        current_point_total = list(map(
+            int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
         # get pc points
-        current_pc_points, max_pc_points = map(int, browser.find_element_by_class_name('pcsearch').text.split('/'))
+        current_pc_points, max_pc_points = map(
+            int, browser.find_element_by_class_name('pcsearch').text.split('/'))
         # get mobile points
-        current_mobile_points, max_mobile_points = \
-            map(int, browser.find_element_by_class_name('mobilesearch').text.split('/'))
+        current_mobile_points, max_mobile_points = map(
+            int, browser.find_element_by_class_name('mobilesearch').text.split('/'))
         # get edge points
-        current_edge_points, max_edge_points = map(int,
-                                                   browser.find_element_by_class_name('edgesearch').text.split('/'))
-    except ValueError as e:
+        current_edge_points, max_edge_points = map(
+            int, browser.find_element_by_class_name('edgesearch').text.split('/'))
+    except ValueError:
         return False
 
     # if log flag is provided, log the point totals
@@ -662,7 +659,6 @@ def get_point_total(pc=False, mobile=False, log=False):
         if current_mobile_points < max_mobile_points:
             return False
         return True
-
 
 
 def get_email_links():
@@ -743,7 +739,7 @@ if __name__ == '__main__':
                 browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
                 try:
                     log_in(email, password)
-                    browser.get(DASHBOARD_URL) # FIXME!!
+                    browser.get(DASHBOARD_URL)
                     browser.get(BING_SEARCH_URL)
                     # mobile search
                     search(search_list, mobile_search=True)
@@ -764,7 +760,7 @@ if __name__ == '__main__':
                 browser = browser_setup(parser.headless_setting, PC_USER_AGENT)
                 try:
                     log_in(email, password)
-                    browser.get(DASHBOARD_URL)  # FIXME!!
+                    browser.get(DASHBOARD_URL)
                     if parser.pc_mode:
                         browser.get(BING_SEARCH_URL)
                         # pc edge search
@@ -783,6 +779,5 @@ if __name__ == '__main__':
                     logging.error(msg=f'WebDriverException while executing pc portion', exc_info=True)
                 finally:
                     browser.quit()
-            # logging.info(msg='\n\n')
     except WebDriverException:
         logging.exception(msg='Failure at main()')
