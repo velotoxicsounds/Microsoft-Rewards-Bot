@@ -124,10 +124,9 @@ def get_login_info():
 
 def download_driver(driver_path, system):
     # determine latest chromedriver version
-    url = "https://sites.google.com/a/chromium.org/chromedriver"
+    url = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
     r = requests.get(url)
-    latest_version = max([float("{}.{}".format(version[0], version[1]))
-                          for version in re.findall("ChromeDriver (\d+).(\d+)", r.text)])
+    latest_version = r.text
     if system == "Windows":
         url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_win32.zip".format(latest_version)
     elif system == "Darwin":
@@ -137,11 +136,10 @@ def download_driver(driver_path, system):
 
     response = requests.get(url, stream=True)
     zip_file_path = os.path.join(os.path.dirname(driver_path), os.path.basename(url))
-    handle = open(zip_file_path, "wb")
-    for chunk in response.iter_content(chunk_size=512):
-        if chunk:  # filter out keep alive chunks
-            handle.write(chunk)
-    handle.close()
+    with open(zip_file_path, "wb") as handle:
+        for chunk in response.iter_content(chunk_size=512):
+            if chunk:  # filter out keep alive chunks
+                handle.write(chunk)
     extracted_dir = os.path.splitext(zip_file_path)[0]
     with zipfile.ZipFile(zip_file_path, "r") as zip_file:
         zip_file.extractall(extracted_dir)
@@ -653,27 +651,16 @@ def sign_in_prompt():
         time.sleep(4)
 
 
-def get_point_total(pc=False, mobile=False, log=False):
+def get_point_total(pc=False, mobile=False, log=True):
     """
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
     """
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
-    time.sleep(0.1)
-    try:
-        # New wait for checking for credits2, sometimes bing does not show page properly, will move to own function
-        start_time = time.time()
-        while True:
-            if browser.find_elements_by_class_name('credits2'):
-                break
-            else:
-                if time.time() - start_time > 15:  # hardcoded for now
-                    return False
-        # get total points, capped to current item on wishlist
-    except (NoSuchElementException, TimeoutException):
-        return False
-
+    wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)
+    pcsearch = browser.find_element_by_class_name('pcsearch')
+    pcsearch.location_once_scrolled_into_view
     try:
         current_point_total = list(map(int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
         # get pc points
