@@ -651,7 +651,7 @@ def sign_in_prompt():
         time.sleep(4)
 
 
-def get_point_total(pc=False, mobile=False, log=True):
+def get_point_total(pc=False, mobile=False, log=False):
     """
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
