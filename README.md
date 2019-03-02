@@ -78,7 +78,11 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
-**2019.02**
+**2019.02.02**
+
+    - Fixed open offer link to target the link
+
+**2019.02.01**
 
     - Added chromedriver auto-downloading
 

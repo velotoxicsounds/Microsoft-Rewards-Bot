@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.01.01
+# Version 2019.02.02
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -12,10 +12,9 @@ import logging
 import os
 import platform
 import random
-import re
 import time
 import zipfile
-from _datetime import datetime, timedelta
+from datetime import datetime, timedelta
 
 import requests
 from requests.exceptions import RequestException
@@ -476,11 +475,15 @@ def iter_dailies():
     time.sleep(4)
     open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
     if open_offers:
-        logging.info(msg=f'Number of incomplete offers: {len(open_offers)}')
+        logging.info(msg=f'Number of open offers: {len(open_offers)}')
         # get common parent element of open_offers
         parent_elements = [open_offer.find_element_by_xpath('..//..//..//..') for open_offer in open_offers]
-        # get points links from parent, # finds ng-transclude descendant of selected node
-        offer_links = [parent.find_element_by_xpath('descendant::ng-transclude') for parent in parent_elements]
+        # get points links from parent, # finds link (a) descendant of selected node
+        offer_links = [
+            parent.find_element_by_xpath(
+            'div[contains(@class,"actionLink")]//descendant::a')
+            for parent in parent_elements
+        ]
         # iterate through the dailies
         for offer in offer_links:
             time.sleep(3)
