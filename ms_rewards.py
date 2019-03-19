@@ -106,11 +106,9 @@ def get_search_terms():
             logging.error('Error retrieving google trends json.')
         except KeyError:
             logging.error('Cannot parse, JSON keys are modified.')
-    # get unique terms, shuffle, return an enumerated list
-    random.shuffle(search_terms)
-    search_terms = set(search_terms)
+    # get unique terms and return a list
     logging.info(msg=f'# of search items: {len(search_terms)}\n')
-    return list(enumerate(search_terms, start=0))
+    return search_terms
 
 
 def get_login_info():
@@ -422,8 +420,12 @@ def search(search_terms, mobile_search=False):
     """
     if mobile_search:
         search_limit = 20
+        random.shuffle(search_terms)
+        search_terms = list(enumerate(search_terms, start=0))
     else:
         search_limit = 30
+        random.shuffle(search_terms)
+        search_terms = list(enumerate(search_terms, start=0))
 
     logging.info(msg="Search Start")
     if search_terms == [] or search_terms is None:
