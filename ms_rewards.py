@@ -108,7 +108,7 @@ def get_search_terms():
             logging.error('Cannot parse, JSON keys are modified.')
     # get unique terms and return a list
     logging.info(msg=f'# of search items: {len(search_terms)}\n')
-    return search_terms
+    return list(set(search_terms))
 
 
 def get_login_info():
