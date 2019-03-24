@@ -483,7 +483,7 @@ def iter_dailies():
         # get points links from parent, # finds link (a) descendant of selected node
         offer_links = [
             parent.find_element_by_xpath(
-            'div[contains(@class,"actionLink")]//descendant::a')
+                'div[contains(@class,"actionLink")]//descendant::a')
             for parent in parent_elements
         ]
         # iterate through the dailies
@@ -566,21 +566,33 @@ def lightning_quiz():
     for question_round in range(10):
         logging.debug(msg=f'Round# {question_round}')
         # iterate through 4 choices
-        for i in range(4):
+        if find_by_class('rqOption'):
             click_choices = find_by_class('rqOption')
-            if click_choices:
-                i = click_choices[i]
-                # if object is stale, greyed out, or not visible, skip it
-                if i.is_displayed():
+            for i in range(len(click_choices)):
+                if click_choices:
+                    i = click_choices[i]
+                    # if object is stale, greyed out, or not visible, skip it
+                    if i.is_displayed():
+                        logging.debug(msg=f'Clicked {i}')
+                        i.click()
+                        time.sleep(2)
+        elif find_by_id('rqAnswerOption0'):
+            first_page = browser.find_element_by_id('rqAnswerOption0').get_attribute("data-serpquery")
+            browser.get(f"https://www.bing.com{first_page}")
+            time.sleep(3)
+            for i in range(10):
+                if find_by_id(f'rqAnswerOption{i}'):
+                    browser.execute_script(f"document.querySelector('#rqAnswerOption{i}').click();")
                     logging.debug(msg=f'Clicked {i}')
-                    i.click()
                     time.sleep(2)
         # let new page load
         time.sleep(3)
         if find_by_id('quizCompleteContainer'):
             break
     # close the quiz completion splash
-    find_by_css('.cico.btCloseBack')[0].click()
+    quiz_complete = find_by_css('.cico.btCloseBack')
+    if quiz_complete:
+        quiz_complete[0].click()
     time.sleep(3)
     main_window()
 
