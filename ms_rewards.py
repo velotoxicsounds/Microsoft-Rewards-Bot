@@ -483,7 +483,7 @@ def iter_dailies():
         # get points links from parent, # finds link (a) descendant of selected node
         offer_links = [
             parent.find_element_by_xpath(
-            'div[contains(@class,"actionLink")]//descendant::a')
+                'div[contains(@class,"actionLink")]//descendant::a')
             for parent in parent_elements
         ]
         # iterate through the dailies
@@ -580,7 +580,8 @@ def lightning_quiz():
         if find_by_id('quizCompleteContainer'):
             break
     # close the quiz completion splash
-    find_by_css('.cico.btCloseBack')[0].click()
+    if find_by_css('.cico.btCloseBack'):
+        find_by_css('.cico.btCloseBack')[0].click()
     time.sleep(3)
     main_window()
 
@@ -636,7 +637,8 @@ def drag_and_drop_quiz():
                 break
     # close the quiz completion splash
     time.sleep(3)
-    find_by_css('.cico.btCloseBack')[0].click()
+    if find_by_css('.cico.btCloseBack'):
+        find_by_css('.cico.btCloseBack')[0].click()
     time.sleep(3)
     main_window()
 
