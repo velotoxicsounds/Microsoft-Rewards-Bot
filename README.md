@@ -78,6 +78,12 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
+**2019.02.03**
+
+    - Incorporated ShoGinn's lightning quiz fix
+    - Fixed .cico quiz close patch
+    - Added const for logging level
+    
 **2019.02.02**
 
     - Fixed open offer link to target the link

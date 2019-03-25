@@ -41,6 +41,8 @@ PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
 MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
                      'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
                      'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
+# log level
+LOG_LEVEL = logging.DEBUG
 
 
 def init_logging():
@@ -48,7 +50,7 @@ def init_logging():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     os.makedirs('logs', exist_ok=True)
     log_path = os.path.join('logs', 'ms_rewards.log')
-    logging.basicConfig(filename=log_path, level=logging.INFO,
+    logging.basicConfig(filename=log_path, level=LOG_LEVEL,
                         format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
 
 
@@ -565,18 +567,7 @@ def daily_poll():
 def lightning_quiz():
     for question_round in range(10):
         logging.debug(msg=f'Round# {question_round}')
-        # iterate through 4 choices
-        if find_by_class('rqOption'):
-            click_choices = find_by_class('rqOption')
-            for i in range(len(click_choices)):
-                if click_choices:
-                    i = click_choices[i]
-                    # if object is stale, greyed out, or not visible, skip it
-                    if i.is_displayed():
-                        logging.debug(msg=f'Clicked {i}')
-                        i.click()
-                        time.sleep(2)
-        elif find_by_id('rqAnswerOption0'):
+        if find_by_id('rqAnswerOption0'):
             first_page = browser.find_element_by_id('rqAnswerOption0').get_attribute("data-serpquery")
             browser.get(f"https://www.bing.com{first_page}")
             time.sleep(3)
@@ -648,8 +639,9 @@ def drag_and_drop_quiz():
                 break
     # close the quiz completion splash
     time.sleep(3)
-    if find_by_css('.cico.btCloseBack'):
-        find_by_css('.cico.btCloseBack')[0].click()
+    quiz_complete = find_by_css('.cico.btCloseBack')
+    if quiz_complete:
+        quiz_complete[0].click()
     time.sleep(3)
     main_window()
 
