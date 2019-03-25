@@ -648,7 +648,8 @@ def drag_and_drop_quiz():
                 break
     # close the quiz completion splash
     time.sleep(3)
-    find_by_css('.cico.btCloseBack')[0].click()
+    if find_by_css('.cico.btCloseBack'):
+        find_by_css('.cico.btCloseBack')[0].click()
     time.sleep(3)
     main_window()
 
