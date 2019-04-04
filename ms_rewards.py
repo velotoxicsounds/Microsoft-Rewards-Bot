@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.03.01
+# Version 2019.04.01
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -199,11 +199,11 @@ def log_in(email_address, pass_word):
     send_key_by_name('passwd', pass_word)
     logging.debug(msg='Sent Password.')
     # wait for 'sign in' button to be clickable and sign in
-    time.sleep(0.1)
+    time.sleep(0.5)
     send_key_by_name('passwd', Keys.RETURN)
-    time.sleep(1)
+    time.sleep(0.5)
     wait_until_visible(By.ID, 'uhfLogo', 10)
-    time.sleep(2)
+    time.sleep(0.5)
 
 
 def find_by_id(obj_id):
@@ -242,31 +242,48 @@ def find_by_css(selector):
     return browser.find_elements_by_css_selector(selector)
 
 
+# def wait_until_visible(by_, selector, time_to_wait=10):
+#     """
+#     Wait until all objects matching selector are visible
+#     :param by_: Select by ID, XPATH, CSS Selector, other, from By module
+#     :param selector: string of selector
+#     :param time_to_wait: Int time to wait
+#     :return: None
+#     """
+#     try:
+#         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
+#     except TimeoutException:
+#         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
+#         screenshot(selector)
+#         browser.refresh()
+#     except UnexpectedAlertPresentException:
+#         # FIXME
+#         browser.switch_to.alert.dismiss()
+#         # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+#         # screenshot(selector)
+#         # browser.refresh()
+#     except WebDriverException:
+#         logging.exception(msg=f'Webdriver Error for {selector} object')
+#         screenshot(selector)
+#         browser.refresh()
+
+
 def wait_until_visible(by_, selector, time_to_wait=10):
     """
-    Wait until all objects matching selector are visible
-    :param by_: Select by ID, XPATH, CSS Selector, other, from By module
-    :param selector: string of selector
-    :param time_to_wait: Int time to wait
-    :return: None
+    Searches for selector and if found, end the loop
+    Else, keep repeating every 2 seconds until time elapsed, then refresh page
+    :param by_: string which tag to search by
+    :param selector: string selector
+    :param time_to_wait: int time to wait
+    :return: Boolean if selector is found
     """
-    try:
-        WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
-    except TimeoutException:
-        logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
-        screenshot(selector)
-        browser.refresh()
-    except UnexpectedAlertPresentException:
-        # FIXME
-        browser.switch_to.alert.dismiss()
-        # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
-        # screenshot(selector)
-        # browser.refresh()
-    except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for {selector} object')
-        screenshot(selector)
-        browser.refresh()
-
+    start_time = time.time()
+    while (time.time() - start_time) < time_to_wait:
+        if browser.find_element(by=by_, value=selector):
+            return True
+        time.sleep(2)
+    browser.refresh()
+    return False
 
 def wait_until_clickable(by_, selector, time_to_wait=10):
     """
@@ -442,7 +459,7 @@ def search(search_terms, mobile_search=False):
             try:
                 # clears search bar and enters in next search term
                 time.sleep(1)
-                wait_until_visible(By.ID, 'sb_form_q', 30)
+                wait_until_visible(By.ID, 'sb_form_q', 15)
                 clear_by_id('sb_form_q')
                 send_key_by_id('sb_form_q', item)
                 time.sleep(0.1)
@@ -524,7 +541,7 @@ def iter_dailies():
         # check at the end of the loop to log if any offers are remaining
         browser.get(DASHBOARD_URL)
         time.sleep(0.1)
-        wait_until_visible(By.TAG_NAME, 'body', 10)
+        wait_until_visible(By.TAG_NAME, 'body', 10)  # checks for page load
         open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
         logging.info(msg=f'Number of incomplete offers remaining: {len(open_offers)}')
     else:
@@ -663,9 +680,16 @@ def get_point_total(pc=False, mobile=False, log=False):
     """
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
-    wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)
-    pcsearch = browser.find_element_by_class_name('pcsearch')
-    pcsearch.location_once_scrolled_into_view
+    # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
+
+    # TODO add a scroll to obj here
+    if not wait_until_visible(By.CLASS_NAME, 'pcsearch', 10):  # if object not found, return False
+        return False
+    # returns None if pc search not found
+    # pcsearch = browser.find_element_by_class_name('pcsearch')
+    # if pcsearch.location_once_scrolled_into_view is None:  # property causes pc search to be scrolled into area
+    #     return False
+
     try:
         current_point_total = list(map(
             int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
@@ -676,8 +700,9 @@ def get_point_total(pc=False, mobile=False, log=False):
         current_mobile_points, max_mobile_points = map(
             int, browser.find_element_by_class_name('mobilesearch').text.split('/'))
         # get edge points
-        current_edge_points, max_edge_points = map(
-            int, browser.find_element_by_class_name('edgesearch').text.split('/'))
+        # disabled because not detected in new point url
+        # current_edge_points, max_edge_points = map(
+        #     int, browser.find_element_by_class_name('edgesearch').text.split('/'))
     except ValueError:
         return False
 
@@ -685,12 +710,13 @@ def get_point_total(pc=False, mobile=False, log=False):
     if log:
         logging.info(msg=f'Total points = {current_point_total}')
         logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
+        # logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
         logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
 
     # if pc flag, check if pc and edge points met
     if pc:
-        if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+        # if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+        if current_pc_points < max_pc_points:
             return False
         return True
     # if mobile flag, check if mobile points met

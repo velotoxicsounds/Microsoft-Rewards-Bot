@@ -78,6 +78,11 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
+**2019.04.01**  
+
+    - Added fix for detecting pcpoints element during point status check
+    - Removed edge points as the status screen no longer displays them
+
 **2019.03.01**
 
     - Incorporated ShoGinn's lightning quiz fix
