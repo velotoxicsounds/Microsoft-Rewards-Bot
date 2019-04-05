@@ -44,11 +44,12 @@ MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
+
 def _log_level_string_to_int(log_level_string):
     log_level_string = log_level_string.upper()
 
-    if not log_level_string in _LOG_LEVEL_STRINGS:
-        message = 'invalid choice: {0} (choose from {1})'.format(log_level_string, _LOG_LEVEL_STRINGS)
+    if log_level_string not in _LOG_LEVEL_STRINGS:
+        message = f'invalid choice: {log_level_string} (choose from {_LOG_LEVEL_STRINGS})'
         raise argparse.ArgumentTypeError(message)
 
     log_level_int = getattr(logging, log_level_string, logging.INFO)
@@ -108,7 +109,7 @@ def parse_args():
         default='INFO',
         dest='log_level',
         type=_log_level_string_to_int,
-        help='Set the logging output level. {0}'.format(_LOG_LEVEL_STRINGS))
+        help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
     return arg_parser.parse_args()
 
 
