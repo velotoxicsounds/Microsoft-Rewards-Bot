@@ -78,6 +78,10 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
+**2019.04.02**
+
+    - Added adreo00's code for setting log level with argparse
+
 **2019.04.01**  
 
     - Added fix for detecting pcpoints element during point status check
