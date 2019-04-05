@@ -41,18 +41,31 @@ PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
 MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
                      'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
                      'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
-# log level
-LOG_LEVEL = logging.INFO
+# log levels
+_LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+
+def _log_level_string_to_int(log_level_string):
+    log_level_string = log_level_string.upper()
+
+    if not log_level_string in _LOG_LEVEL_STRINGS:
+        message = 'invalid choice: {0} (choose from {1})'.format(log_level_string, _LOG_LEVEL_STRINGS)
+        raise argparse.ArgumentTypeError(message)
+
+    log_level_int = getattr(logging, log_level_string, logging.INFO)
+    # check the logging log_level_choices have not changed from our expected values
+    assert isinstance(log_level_int, int)
+    return log_level_int
 
 
-def init_logging():
-    # gets dir path of python script, not cwd, for execution on cron
+def init_logging(log_level):
+    #gets dir path of python script, not cwd, for execution on cron
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     os.makedirs('logs', exist_ok=True)
     log_path = os.path.join('logs', 'ms_rewards.log')
-    logging.basicConfig(filename=log_path, level=LOG_LEVEL,
-                        format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
-
+    logging.basicConfig(
+        filename=log_path,
+        level=log_level,
+        format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
 
 def parse_args():
     """
@@ -60,16 +73,42 @@ def parse_args():
     :return: argparse object
     """
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--headless', action='store_true', dest='headless_setting', default=False,
-                            help='Activates headless mode, default is off.')
-    arg_parser.add_argument('--mobile', action='store_true', dest='mobile_mode', default=False,
-                            help='Activates mobile search, default is off.')
-    arg_parser.add_argument('--pc', action='store_true', dest='pc_mode', default=False,
-                            help='Activates pc search, default is off.')
-    arg_parser.add_argument('--quiz', action='store_true', dest='quiz_mode', default=False,
-                            help='Activates pc quiz search, default is off.')
-    arg_parser.add_argument('--email', action='store_true', dest='email_mode', default=False,
-                            help='Activates quiz mode, default is off.')
+    arg_parser.add_argument(
+        '--headless',
+        action='store_true',
+        dest='headless_setting',
+        default=False,
+        help='Activates headless mode, default is off.')
+    arg_parser.add_argument(
+        '--mobile',
+        action='store_true',
+        dest='mobile_mode',
+        default=False,
+        help='Activates mobile search, default is off.')
+    arg_parser.add_argument(
+        '--pc',
+        action='store_true',
+        dest='pc_mode',
+        default=False,
+        help='Activates pc search, default is off.')
+    arg_parser.add_argument(
+        '--quiz',
+        action='store_true',
+        dest='quiz_mode',
+        default=False,
+        help='Activates pc quiz search, default is off.')
+    arg_parser.add_argument(
+        '--email',
+        action='store_true',
+        dest='email_mode',
+        default=False,
+        help='Activates quiz mode, default is off.')
+    arg_parser.add_argument(
+        '--log-level',
+        default='INFO',
+        dest='log_level',
+        type=_log_level_string_to_int,
+        help='Set the logging output level. {0}'.format(_LOG_LEVEL_STRINGS))
     return arg_parser.parse_args()
 
 
@@ -606,7 +645,9 @@ def lightning_quiz():
 
 
 def click_quiz():
-    # start the quiz, iterates 10 times
+    """
+    Start the quiz, iterates 10 times
+    """
     for i in range(10):
         if find_by_css('.cico.btCloseBack'):
             find_by_css('.cico.btCloseBack')[0].click()[0].click()
@@ -766,15 +807,14 @@ def ensure_pc_mode_logged_in():
 
 if __name__ == '__main__':
     try:
+        # argparse
+        parser = parse_args()
+
         # start logging
-        init_logging()
+        init_logging(log_level=parser.log_level)
         logging.info(msg='--------------------------------------------------')
         logging.info(msg='-----------------------New------------------------')
         logging.info(msg='--------------------------------------------------')
-
-        # argparse
-        parser = parse_args()
-        logging.info(msg='args parsed.')
 
         # get login dict
         login_dict = get_login_info()
