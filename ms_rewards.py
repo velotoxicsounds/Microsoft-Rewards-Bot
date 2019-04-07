@@ -105,12 +105,23 @@ def parse_args():
         default=False,
         help='Activates quiz mode, default is off.')
     arg_parser.add_argument(
+        '-a', '--all',
+        action='store_true',
+        dest='all_mode',
+        default=False,
+        help='Activates all automated modes (equivalent to --mobile --pc --quiz).')
+    arg_parser.add_argument(
         '--log-level',
         default='INFO',
         dest='log_level',
         type=_log_level_string_to_int,
         help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
-    return arg_parser.parse_args()
+    parser = arg_parser.parse_args()
+    if parser.all_mode:
+        parser.mobile_mode = True
+        parser.pc_mode = True
+        parser.quiz_mode = True
+    return parser
 
 
 def get_dates(days_to_get=4):
