@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.04.02
+# Version 2019.04.03
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -319,11 +319,12 @@ def wait_until_visible(by_, selector, time_to_wait=10):
     """
     start_time = time.time()
     while (time.time() - start_time) < time_to_wait:
-        if browser.find_element(by=by_, value=selector):
+        if browser.find_elements(by=by_, value=selector):
             return True
+        browser.refresh()  # for other checks besides points url
         time.sleep(2)
-    browser.refresh()
     return False
+
 
 def wait_until_clickable(by_, selector, time_to_wait=10):
     """

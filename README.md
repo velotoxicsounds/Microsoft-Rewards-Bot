@@ -78,6 +78,10 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
+**2019.04.03**
+
+    - Added fix for wait_until_visible from .find_element to .find_elements
+
 **2019.04.02**
 
     - Added adreo00's code for setting log level with argparse
