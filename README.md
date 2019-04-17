@@ -39,6 +39,7 @@ This program will automatically complete search requests and quizzes on Microsof
 		- `--mobile` is for mobile search
 		- `--pc` is for pc search
 		- `--quiz` is for quiz search  
+		- `-a` or `--all` is short for mobile, pc, and quiz search
 	- Script by will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Run time for one account is under 5 minutes, for 100% daily completion 
