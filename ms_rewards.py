@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.02.02
+# Version 2019.04.03
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -41,18 +41,32 @@ PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
 MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
                      'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
                      'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
-# log level
-LOG_LEVEL = logging.DEBUG
+# log levels
+_LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
 
-def init_logging():
-    # gets dir path of python script, not cwd, for execution on cron
+def _log_level_string_to_int(log_level_string):
+    log_level_string = log_level_string.upper()
+
+    if log_level_string not in _LOG_LEVEL_STRINGS:
+        message = f'invalid choice: {log_level_string} (choose from {_LOG_LEVEL_STRINGS})'
+        raise argparse.ArgumentTypeError(message)
+
+    log_level_int = getattr(logging, log_level_string, logging.INFO)
+    # check the logging log_level_choices have not changed from our expected values
+    assert isinstance(log_level_int, int)
+    return log_level_int
+
+
+def init_logging(log_level):
+    #gets dir path of python script, not cwd, for execution on cron
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     os.makedirs('logs', exist_ok=True)
     log_path = os.path.join('logs', 'ms_rewards.log')
-    logging.basicConfig(filename=log_path, level=LOG_LEVEL,
-                        format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
-
+    logging.basicConfig(
+        filename=log_path,
+        level=log_level,
+        format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
 
 def parse_args():
     """
@@ -60,17 +74,54 @@ def parse_args():
     :return: argparse object
     """
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--headless', action='store_true', dest='headless_setting', default=False,
-                            help='Activates headless mode, default is off.')
-    arg_parser.add_argument('--mobile', action='store_true', dest='mobile_mode', default=False,
-                            help='Activates mobile search, default is off.')
-    arg_parser.add_argument('--pc', action='store_true', dest='pc_mode', default=False,
-                            help='Activates pc search, default is off.')
-    arg_parser.add_argument('--quiz', action='store_true', dest='quiz_mode', default=False,
-                            help='Activates pc quiz search, default is off.')
-    arg_parser.add_argument('--email', action='store_true', dest='email_mode', default=False,
-                            help='Activates quiz mode, default is off.')
-    return arg_parser.parse_args()
+    arg_parser.add_argument(
+        '--headless',
+        action='store_true',
+        dest='headless_setting',
+        default=False,
+        help='Activates headless mode, default is off.')
+    arg_parser.add_argument(
+        '--mobile',
+        action='store_true',
+        dest='mobile_mode',
+        default=False,
+        help='Activates mobile search, default is off.')
+    arg_parser.add_argument(
+        '--pc',
+        action='store_true',
+        dest='pc_mode',
+        default=False,
+        help='Activates pc search, default is off.')
+    arg_parser.add_argument(
+        '--quiz',
+        action='store_true',
+        dest='quiz_mode',
+        default=False,
+        help='Activates pc quiz search, default is off.')
+    arg_parser.add_argument(
+        '--email',
+        action='store_true',
+        dest='email_mode',
+        default=False,
+        help='Activates quiz mode, default is off.')
+    arg_parser.add_argument(
+        '-a', '--all',
+        action='store_true',
+        dest='all_mode',
+        default=False,
+        help='Activates all automated modes (equivalent to --mobile --pc --quiz).')
+    arg_parser.add_argument(
+        '--log-level',
+        default='INFO',
+        dest='log_level',
+        type=_log_level_string_to_int,
+        help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
+    parser = arg_parser.parse_args()
+    if parser.all_mode:
+        parser.mobile_mode = True
+        parser.pc_mode = True
+        parser.quiz_mode = True
+    return parser
 
 
 def get_dates(days_to_get=4):
@@ -199,11 +250,11 @@ def log_in(email_address, pass_word):
     send_key_by_name('passwd', pass_word)
     logging.debug(msg='Sent Password.')
     # wait for 'sign in' button to be clickable and sign in
-    time.sleep(0.1)
+    time.sleep(0.5)
     send_key_by_name('passwd', Keys.RETURN)
-    time.sleep(1)
+    time.sleep(0.5)
     wait_until_visible(By.ID, 'uhfLogo', 10)
-    time.sleep(2)
+    time.sleep(0.5)
 
 
 def find_by_id(obj_id):
@@ -242,30 +293,48 @@ def find_by_css(selector):
     return browser.find_elements_by_css_selector(selector)
 
 
+# def wait_until_visible(by_, selector, time_to_wait=10):
+#     """
+#     Wait until all objects matching selector are visible
+#     :param by_: Select by ID, XPATH, CSS Selector, other, from By module
+#     :param selector: string of selector
+#     :param time_to_wait: Int time to wait
+#     :return: None
+#     """
+#     try:
+#         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
+#     except TimeoutException:
+#         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
+#         screenshot(selector)
+#         browser.refresh()
+#     except UnexpectedAlertPresentException:
+#         # FIXME
+#         browser.switch_to.alert.dismiss()
+#         # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+#         # screenshot(selector)
+#         # browser.refresh()
+#     except WebDriverException:
+#         logging.exception(msg=f'Webdriver Error for {selector} object')
+#         screenshot(selector)
+#         browser.refresh()
+
+
 def wait_until_visible(by_, selector, time_to_wait=10):
     """
-    Wait until all objects matching selector are visible
-    :param by_: Select by ID, XPATH, CSS Selector, other, from By module
-    :param selector: string of selector
-    :param time_to_wait: Int time to wait
-    :return: None
+    Searches for selector and if found, end the loop
+    Else, keep repeating every 2 seconds until time elapsed, then refresh page
+    :param by_: string which tag to search by
+    :param selector: string selector
+    :param time_to_wait: int time to wait
+    :return: Boolean if selector is found
     """
-    try:
-        WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
-    except TimeoutException:
-        logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
-        screenshot(selector)
-        browser.refresh()
-    except UnexpectedAlertPresentException:
-        # FIXME
-        browser.switch_to.alert.dismiss()
-        # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
-        # screenshot(selector)
-        # browser.refresh()
-    except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for {selector} object')
-        screenshot(selector)
-        browser.refresh()
+    start_time = time.time()
+    while (time.time() - start_time) < time_to_wait:
+        if browser.find_elements(by=by_, value=selector):
+            return True
+        browser.refresh()  # for other checks besides points url
+        time.sleep(2)
+    return False
 
 
 def wait_until_clickable(by_, selector, time_to_wait=10):
@@ -442,7 +511,7 @@ def search(search_terms, mobile_search=False):
             try:
                 # clears search bar and enters in next search term
                 time.sleep(1)
-                wait_until_visible(By.ID, 'sb_form_q', 30)
+                wait_until_visible(By.ID, 'sb_form_q', 15)
                 clear_by_id('sb_form_q')
                 send_key_by_id('sb_form_q', item)
                 time.sleep(0.1)
@@ -524,7 +593,7 @@ def iter_dailies():
         # check at the end of the loop to log if any offers are remaining
         browser.get(DASHBOARD_URL)
         time.sleep(0.1)
-        wait_until_visible(By.TAG_NAME, 'body', 10)
+        wait_until_visible(By.TAG_NAME, 'body', 10)  # checks for page load
         open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
         logging.info(msg=f'Number of incomplete offers remaining: {len(open_offers)}')
     else:
@@ -589,7 +658,9 @@ def lightning_quiz():
 
 
 def click_quiz():
-    # start the quiz, iterates 10 times
+    """
+    Start the quiz, iterates 10 times
+    """
     for i in range(10):
         if find_by_css('.cico.btCloseBack'):
             find_by_css('.cico.btCloseBack')[0].click()[0].click()
@@ -663,9 +734,16 @@ def get_point_total(pc=False, mobile=False, log=False):
     """
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
-    wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)
-    pcsearch = browser.find_element_by_class_name('pcsearch')
-    pcsearch.location_once_scrolled_into_view
+    # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
+
+    # TODO add a scroll to obj here
+    if not wait_until_visible(By.CLASS_NAME, 'pcsearch', 10):  # if object not found, return False
+        return False
+    # returns None if pc search not found
+    # pcsearch = browser.find_element_by_class_name('pcsearch')
+    # if pcsearch.location_once_scrolled_into_view is None:  # property causes pc search to be scrolled into area
+    #     return False
+
     try:
         current_point_total = list(map(
             int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
@@ -676,8 +754,9 @@ def get_point_total(pc=False, mobile=False, log=False):
         current_mobile_points, max_mobile_points = map(
             int, browser.find_element_by_class_name('mobilesearch').text.split('/'))
         # get edge points
-        current_edge_points, max_edge_points = map(
-            int, browser.find_element_by_class_name('edgesearch').text.split('/'))
+        # disabled because not detected in new point url
+        # current_edge_points, max_edge_points = map(
+        #     int, browser.find_element_by_class_name('edgesearch').text.split('/'))
     except ValueError:
         return False
 
@@ -685,12 +764,13 @@ def get_point_total(pc=False, mobile=False, log=False):
     if log:
         logging.info(msg=f'Total points = {current_point_total}')
         logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
+        # logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
         logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
 
     # if pc flag, check if pc and edge points met
     if pc:
-        if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+        # if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+        if current_pc_points < max_pc_points:
             return False
         return True
     # if mobile flag, check if mobile points met
@@ -740,15 +820,14 @@ def ensure_pc_mode_logged_in():
 
 if __name__ == '__main__':
     try:
+        # argparse
+        parser = parse_args()
+
         # start logging
-        init_logging()
+        init_logging(log_level=parser.log_level)
         logging.info(msg='--------------------------------------------------')
         logging.info(msg='-----------------------New------------------------')
         logging.info(msg='--------------------------------------------------')
-
-        # argparse
-        parser = parse_args()
-        logging.info(msg='args parsed.')
 
         # get login dict
         login_dict = get_login_info()
