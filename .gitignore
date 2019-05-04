@@ -1,5 +1,11 @@
+# Config files
 ms_rewards_login_dict.json
-
 email_links.txt
 
+# pip
+venv/
+
+# Output artifacts
+drivers/
+logs/
 geckodriver.log

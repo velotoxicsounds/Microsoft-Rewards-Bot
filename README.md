@@ -39,6 +39,7 @@ This program will automatically complete search requests and quizzes on Microsof
 		- `--mobile` is for mobile search
 		- `--pc` is for pc search
 		- `--quiz` is for quiz search  
+		- `-a` or `--all` is short for mobile, pc, and quiz search
 	- Script by will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
 	- Script by default will run headlessly (can change this setting in the .py file)  
 	- Run time for one account is under 5 minutes, for 100% daily completion 
@@ -78,7 +79,30 @@ This program will automatically complete search requests and quizzes on Microsof
 
 <h2>Versions</h2>  
 
-**2019.02**
+**2019.04.03**
+
+    - Added fix for wait_until_visible from .find_element to .find_elements
+
+**2019.04.02**
+
+    - Added adreo00's code for setting log level with argparse
+
+**2019.04.01**  
+
+    - Added fix for detecting pcpoints element during point status check
+    - Removed edge points as the status screen no longer displays them
+
+**2019.03.01**
+
+    - Incorporated ShoGinn's lightning quiz fix
+    - Fixed .cico quiz close patch
+    - Added const for logging level
+    
+**2019.02.02**
+
+    - Fixed open offer link to target the link
+
+**2019.02.01**
 
     - Added chromedriver auto-downloading
 
