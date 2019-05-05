@@ -1,8 +1,14 @@
 # Config files
-config/*.json
+ms_rewards_login_dict.json
+email_links.txt
+
+# pip
+venv/
+
 # Output artifacts
 drivers/
 logs/
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 # C extensions
 # Distribution / packaging
@@ -32,3 +38,6 @@ logs/
 .idea/
 rewardsbot/__pycache__/
 venv/
+=======
+geckodriver.log
+>>>>>>> parent of 3176c74... Changed most of the files and structure
