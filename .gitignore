@@ -30,3 +30,5 @@ logs/
 #vscode
 # JetBrains
 .idea/
+rewardsbot/__pycache__/
+venv/
