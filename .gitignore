@@ -1,11 +1,32 @@
 # Config files
-ms_rewards_login_dict.json
-email_links.txt
-
-# pip
-venv/
-
+config/*.json
 # Output artifacts
 drivers/
 logs/
-geckodriver.log
+# Byte-compiled / optimized / DLL files
+# C extensions
+# Distribution / packaging
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+# Installer logs
+# Unit test / coverage reports
+# Translations
+# Django stuff:
+# Flask stuff:
+# Scrapy stuff:
+# Sphinx documentation
+# PyBuilder
+# Jupyter Notebook
+# IPython
+# pyenv
+# celery beat schedule file
+# SageMath parsed files
+# Environments
+# Spyder project settings
+# Rope project settings
+# mkdocs documentation
+# mypy
+#vscode
+# JetBrains
+.idea/
