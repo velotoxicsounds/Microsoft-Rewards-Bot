@@ -61,6 +61,14 @@ This program will automatically complete search requests and quizzes on Microsof
 		- Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
 	- Change the paths to the json in the .py file to appropriate path
 
+## Development Version
+
+If you feel like checking out the bleeding edge version checkout the dev branch!
+
+```
+git clone https://github.com/xMNG/Microsoft-Rewards-Bot.git --branch=dev
+```
+
 <h2>TO DO</h2>
 
 - Argparse for options:
