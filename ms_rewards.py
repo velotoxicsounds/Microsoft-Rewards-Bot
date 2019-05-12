@@ -10,6 +10,7 @@ import argparse
 import json
 import logging
 import os
+import sys
 import platform
 import random
 import time
@@ -43,6 +44,16 @@ MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.
                      'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+
+
+def check_python_version():
+    """
+    Ensure the correct version of Python is being used.
+    """
+    minimum_version = (3, 6)
+    if sys.version_info < minimum_version:
+        message = 'Only Python %d.%d and above is supported.' % minimum_version
+        raise Exception(message)
 
 
 def _log_level_string_to_int(log_level_string):
@@ -819,6 +830,7 @@ def ensure_pc_mode_logged_in():
 
 
 if __name__ == '__main__':
+    check_python_version()
     try:
         # argparse
         parser = parse_args()
