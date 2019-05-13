@@ -37,7 +37,6 @@ logs/
 # JetBrains
 .idea/
 rewardsbot/__pycache__/
-venv/
 =======
 geckodriver.log
 >>>>>>> parent of 3176c74... Changed most of the files and structure

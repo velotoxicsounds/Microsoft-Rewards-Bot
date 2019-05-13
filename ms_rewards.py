@@ -10,7 +10,6 @@ import argparse
 import json
 import logging
 import os
-import sys
 import platform
 import random
 import time
@@ -51,7 +50,7 @@ def check_python_version():
     Ensure the correct version of Python is being used.
     """
     minimum_version = (3, 6)
-    if sys.version_info < minimum_version:
+    if platform.python_version_tuple() < minimum_version:
         message = 'Only Python %d.%d and above is supported.' % minimum_version
         raise Exception(message)
 
@@ -70,7 +69,7 @@ def _log_level_string_to_int(log_level_string):
 
 
 def init_logging(log_level):
-    #gets dir path of python script, not cwd, for execution on cron
+    # gets dir path of python script, not cwd, for execution on cron
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     os.makedirs('logs', exist_ok=True)
     log_path = os.path.join('logs', 'ms_rewards.log')
@@ -78,6 +77,7 @@ def init_logging(log_level):
         filename=log_path,
         level=log_level,
         format='%(asctime)s :: %(levelname)s :: %(name)s :: %(message)s')
+
 
 def parse_args():
     """
@@ -127,12 +127,12 @@ def parse_args():
         dest='log_level',
         type=_log_level_string_to_int,
         help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
-    parser = arg_parser.parse_args()
-    if parser.all_mode:
-        parser.mobile_mode = True
-        parser.pc_mode = True
-        parser.quiz_mode = True
-    return parser
+    _parser = arg_parser.parse_args()
+    if _parser.all_mode:
+        _parser.mobile_mode = True
+        _parser.pc_mode = True
+        _parser.quiz_mode = True
+    return _parser
 
 
 def get_dates(days_to_get=4):
