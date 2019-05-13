@@ -49,9 +49,9 @@ def check_python_version():
     """
     Ensure the correct version of Python is being used.
     """
-    minimum_version = (3, 6)
+    minimum_version = ('3', '6')
     if platform.python_version_tuple() < minimum_version:
-        message = 'Only Python %d.%d and above is supported.' % minimum_version
+        message = 'Only Python %s.%s and above is supported.' % minimum_version
         raise Exception(message)
 
 
