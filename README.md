@@ -17,7 +17,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Supports unlimited accounts via JSON, in randomized order.  
 - Randomized search speeds   
 - Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG
-- Tested and confirmed working for U.S. (more to come!)  
+- Tested and confirmed working for U.S. and U.K. (more to come!)  
 
 <h2>REQUIREMENTS</h2>
 
