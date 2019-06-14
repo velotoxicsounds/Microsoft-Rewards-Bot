@@ -122,6 +122,12 @@ def parse_args():
         default=False,
         help='Activates all automated modes (equivalent to --mobile --pc --quiz).')
     arg_parser.add_argument(
+        '--authenticator',
+        action='store_true',
+        dest='use_authenticator',
+        default=False,
+        help='Use MS Authenticator instead of a password for ALL accounts. Disables headless mode, default is off.')
+    arg_parser.add_argument(
         '--log-level',
         default='INFO',
         dest='log_level',
@@ -132,6 +138,8 @@ def parse_args():
         _parser.mobile_mode = True
         _parser.pc_mode = True
         _parser.quiz_mode = True
+    if _parser.use_authenticator:
+        _parser.headless_setting = False
     return _parser
 
 
@@ -255,16 +263,24 @@ def log_in(email_address, pass_word):
     time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    # wait for password form and enter password
-    time.sleep(0.5)
-    wait_until_clickable(By.NAME, 'passwd', 10)
-    send_key_by_name('passwd', pass_word)
-    logging.debug(msg='Sent Password.')
-    # wait for 'sign in' button to be clickable and sign in
-    time.sleep(0.5)
-    send_key_by_name('passwd', Keys.RETURN)
-    time.sleep(0.5)
-    wait_until_visible(By.ID, 'uhfLogo', 10)
+    time.sleep(10)
+
+    if not parser.use_authenticator:
+        # wait for password form and enter password
+        time.sleep(0.5)
+        wait_until_clickable(By.NAME, 'passwd', 10)
+        send_key_by_name('passwd', pass_word)
+        logging.debug(msg='Sent Password.')
+        # wait for 'sign in' button to be clickable and sign in
+        time.sleep(0.5)
+        send_key_by_name('passwd', Keys.RETURN)
+        time.sleep(0.5)
+        # Passwords only require the standard delay
+        wait_until_visible(By.ID, 'uhfLogo', 10)
+    else:
+        # If using mobile 2FA, add a longer delay for sign in approval
+        wait_until_visible(By.ID, 'uhfLogo', 300)
+
     time.sleep(0.5)
 
 

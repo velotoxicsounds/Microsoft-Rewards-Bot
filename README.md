@@ -11,12 +11,12 @@ This program will automatically complete search requests and quizzes on Microsof
 <h2>Features</h2> 
  
 - Completes PC search, Edge search, Mobile search via user agents
-- Retrieves top daily searches via google trends' API
+- Retrieves top daily searches via Google Trends' API
 - Completes polls, all types of quizzes (multiple choice, click and drag and reorder), and explore dailies 
 - Headless mode (Confirmed working on DigitalOcean linux droplet)  
 - Supports unlimited accounts via JSON, in randomized order.  
-- Randomized search speeds   
-- Logs errors and info by default, can log executed commands and search terms via changing log.level to logging.DEBUG
+- Randomized search speeds
+- Logs errors and info by default, can log executed commands and search terms by changing the log level to DEBUG
 - Tested and confirmed working for U.S. and U.K. (more to come!)  
 
 <h2>REQUIREMENTS</h2>
@@ -24,8 +24,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Python 3.6
 - Requests 2.21.0
 - Selenium 3.14.0
-
-- Chrome Browser 
+- Chrome Browser
 
 <h2>HOW TO USE</h2> 
 
@@ -40,8 +39,13 @@ This program will automatically complete search requests and quizzes on Microsof
 		- `--pc` is for pc search
 		- `--quiz` is for quiz search  
 		- `-a` or `--all` is short for mobile, pc, and quiz search
-	- Script by will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
-	- Script by default will run headlessly (can change this setting in the .py file)  
+		- `--authenticator` use Microsoft Authenticator prompts instead of passwords
+    		- **When using Microsoft Authenticator:**
+        		- Headless mode is always disabled
+        		- Respond to the prompt within 90 seconds and Approve the sign in request
+        		- Learn how to use and download the app at [https://go.microsoft.com/fwlink/?linkid=871853](https://go.microsoft.com/fwlink/?linkid=871853)
+	- Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
+	- Script by default will run in interactive mode
 	- Run time for one account is under 5 minutes, for 100% daily completion 
 	- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`  
 5. For completing points from email links:
