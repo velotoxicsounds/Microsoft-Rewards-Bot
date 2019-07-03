@@ -377,7 +377,6 @@ def wait_until_clickable(by_, selector, time_to_wait=10):
     except TimeoutException:
         logging.exception(msg=f'{selector} element Not clickable - Timeout Exception', exc_info=False)
         screenshot(selector)
-        browser.refresh()
     except UnexpectedAlertPresentException:
         # FIXME
         browser.switch_to.alert.dismiss()
@@ -387,7 +386,6 @@ def wait_until_clickable(by_, selector, time_to_wait=10):
     except WebDriverException:
         logging.exception(msg=f'Webdriver Error for {selector} object')
         screenshot(selector)
-        browser.refresh()
 
 
 def send_key_by_name(name, key):
