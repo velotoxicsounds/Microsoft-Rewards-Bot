@@ -241,12 +241,14 @@ def browser_setup(headless_mode, user_agent):
         download_driver(path, system)
 
     options = Options()
-    if headless_mode:
-        options.add_argument('--headless')
-
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--enable-strict-powerful-feature-restrictions')
+    options.add_argument('--disable-geolocation')
+
+    if headless_mode:
+        options.add_argument('--headless')
 
     chrome_obj = webdriver.Chrome(path, chrome_options=options)
 
