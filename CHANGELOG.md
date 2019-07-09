@@ -1,3 +1,7 @@
+**2019-07-09**
+
+    - Fixed sporadic crashes caused by geolocation requests 
+
 **2019-07-02**
 
     - Fixed browser refresh loop caused by login errors
