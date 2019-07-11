@@ -248,7 +248,6 @@ def browser_setup(headless_mode, user_agent):
     prefs = {"profile.default_content_setting_values.geolocation" : 2}
     options.add_experimental_option("prefs", prefs)
 
-
     if headless_mode:
         options.add_argument('--headless')
 
