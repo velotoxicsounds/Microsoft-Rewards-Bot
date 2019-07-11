@@ -244,8 +244,10 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--enable-strict-powerful-feature-restrictions')
-    options.add_argument('--disable-geolocation')
+
+    prefs = {"profile.default_content_setting_values.geolocation" : 2}
+    options.add_experimental_option("prefs", prefs)
+
 
     if headless_mode:
         options.add_argument('--headless')
