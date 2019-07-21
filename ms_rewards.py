@@ -244,6 +244,7 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_experimental_option('w3c', False)
 
     prefs = {
         "profile.default_content_setting_values.geolocation" : 2, "profile.default_content_setting_values.notifications": 2
