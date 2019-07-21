@@ -1,6 +1,6 @@
 #! /usr/lib/python3.6
 # ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.04.03
+# Version 2019.07.13
 
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
@@ -241,12 +241,18 @@ def browser_setup(headless_mode, user_agent):
         download_driver(path, system)
 
     options = Options()
-    if headless_mode:
-        options.add_argument('--headless')
-
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+
+    prefs = {
+        "profile.default_content_setting_values.geolocation" : 2, "profile.default_content_setting_values.notifications": 2
+        }
+
+    options.add_experimental_option("prefs", prefs)
+
+    if headless_mode:
+        options.add_argument('--headless')
 
     chrome_obj = webdriver.Chrome(path, chrome_options=options)
 
