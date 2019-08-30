@@ -14,6 +14,7 @@ import platform
 import random
 import time
 import zipfile
+import os
 from datetime import datetime, timedelta
 
 import requests
@@ -54,6 +55,11 @@ def check_python_version():
         message = 'Only Python %s.%s and above is supported.' % minimum_version
         raise Exception(message)
 
+def update_driver():
+    '''
+    Auto deletes Chrome driver to ensure no errors - this forces an autoupdate of chrome drivers. There is probably a more efficient way of doing this.
+    '''
+    os.remove("drivers/chromedriver.exe")
 
 def _log_level_string_to_int(log_level_string):
     log_level_string = log_level_string.upper()
@@ -853,6 +859,8 @@ def ensure_pc_mode_logged_in():
 
 if __name__ == '__main__':
     check_python_version()
+    if os.path.exists("drivers/chromedriver.exe"):
+        update_driver()
     try:
         # argparse
         parser = parse_args()
