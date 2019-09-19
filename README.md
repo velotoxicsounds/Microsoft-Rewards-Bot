@@ -76,6 +76,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Proxy support
 - Multithreaded mode or seleniumGrid
 - Support for other regions
+- Telegram Intergration for reporting bot status/total points.
 
 <h2>License</h2>
 
