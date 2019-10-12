@@ -710,8 +710,10 @@ def click_quiz():
             random.choice(choices).click()
             time.sleep(3)
         # click the 'next question' button
-        wait_until_clickable(By.ID, 'check', 10)
-        click_by_id('check')
+        # wait_until_clickable(By.ID, 'check', 10)
+        wait_until_clickable(By.CLASS_NAME, 'wk_button', 10)
+        # click_by_id('check')
+        click_by_class('wk_button')
         # if the green check mark reward icon is visible, end loop
         time.sleep(3)
         if find_by_css('span[class="rw_icon"]'):
