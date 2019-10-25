@@ -5,7 +5,7 @@ Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes
 
 <h2>Overview</h2>
 
-This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' api. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source.  Code critique/feedback and contributions welcome!
+This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source.  Code critique/feedback and contributions welcome!
 
 
 <h2>Features</h2> 
