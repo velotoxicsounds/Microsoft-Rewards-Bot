@@ -262,7 +262,7 @@ def browser_setup(headless_mode, user_agent):
     if headless_mode:
         options.add_argument('--headless')
 
-    chrome_obj = webdriver.Chrome(path, chrome_options=options)
+    chrome_obj = webdriver.Chrome(path, options=options)
 
     return chrome_obj
 
