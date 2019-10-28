@@ -16,4 +16,3 @@ geckodriver.log
 # cached python objects
 *.pyc
 *.pyo
-ms_rewards_login_dict.json.example
