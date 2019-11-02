@@ -238,7 +238,7 @@ def browser_setup(headless_mode, user_agent):
     :return: webdriver obj
     """
     os.makedirs('drivers', exist_ok=True)
-    path = "/usr/bin/chromedriver"
+    path = os.path.join('drivers', 'chromedriver')
     system = platform.system()
     if system == "Windows":
         if not path.endswith(".exe"):
