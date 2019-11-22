@@ -250,6 +250,7 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--disable-webgl')
     options.add_argument('--no-sandbox')
+    options.add_argument('--disable-extensions')
     options.add_argument('--disable-dev-shm-usage')
     options.add_experimental_option('w3c', False)
 
