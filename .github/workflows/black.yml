@@ -1,2 +1,10 @@
-- name: Black Code Formatter
+- name: Black Code Formatterworkflow "Example Workflow" {
+  on = "push"
+  resolves = ["Lint"]
+}
+
+action "Lint" {
+  uses = "lgeiger/black-action@master"
+  args = ". --check"
+}
   uses: lgeiger/black-action@v1.0.1
