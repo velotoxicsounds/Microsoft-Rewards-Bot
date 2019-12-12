@@ -238,7 +238,7 @@ def browser_setup(headless_mode, user_agent):
     :return: webdriver obj
     """
     os.makedirs('drivers', exist_ok=True)
-    path = "/usr/bin/chromedriver"
+    path = os.path.join('drivers', 'chromedriver')
     system = platform.system()
     if system == "Windows":
         if not path.endswith(".exe"):
@@ -250,6 +250,7 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--disable-webgl')
     options.add_argument('--no-sandbox')
+    options.add_argument('--disable-extensions')
     options.add_argument('--disable-dev-shm-usage')
     options.add_experimental_option('w3c', False)
 
