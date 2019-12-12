@@ -8,4 +8,3 @@ action "Lint" {
   args = ". --check"
 }
   uses: lgeiger/black-action@v1.0.1
-  
