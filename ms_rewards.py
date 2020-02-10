@@ -243,7 +243,8 @@ def download_driver(driver_path, system):
         )
 
     response = requests.get(url, stream=True)
-    zip_file_path = os.path.join(os.path.dirname(driver_path), os.path.basename(url))
+    zip_file_path = os.path.join(os.path.dirname(
+        driver_path), os.path.basename(url))
     with open(zip_file_path, "wb") as handle:
         for chunk in response.iter_content(chunk_size=512):
             if chunk:  # filter out keep alive chunks
@@ -260,7 +261,8 @@ def download_driver(driver_path, system):
     os.chmod(driver_path, 0o755)
     # way to note which chromedriver version is installed
     open(
-        os.path.join(os.path.dirname(driver_path), "{}.txt".format(latest_version)), "w"
+        os.path.join(os.path.dirname(driver_path),
+                     "{}.txt".format(latest_version)), "w"
     ).close()
 
 
@@ -485,11 +487,13 @@ def send_key_by_id(obj_id, key):
             msg=f"Send key by ID to {obj_id} element not visible or clickable."
         )
     except NoSuchElementException:
-        logging.exception(msg=f"Send key by ID to {obj_id} element, no such element")
+        logging.exception(
+            msg=f"Send key by ID to {obj_id} element, no such element")
         screenshot(obj_id)
         browser.refresh()
     except WebDriverException:
-        logging.exception(msg=f"Webdriver Error for send key by ID to {obj_id} object")
+        logging.exception(
+            msg=f"Webdriver Error for send key by ID to {obj_id} object")
 
 
 def click_by_class(selector):
@@ -531,7 +535,8 @@ def click_by_id(obj_id):
             msg=f"Click by ID to {obj_id} element not visible or clickable."
         )
     except WebDriverException:
-        logging.exception(msg=f"Webdriver Error for click by ID to {obj_id} object")
+        logging.exception(
+            msg=f"Webdriver Error for click by ID to {obj_id} object")
 
 
 def clear_by_id(obj_id):
@@ -547,7 +552,8 @@ def clear_by_id(obj_id):
             msg=f"Clear by ID to {obj_id} element not visible or clickable."
         )
     except NoSuchElementException:
-        logging.exception(msg=f"Send key by ID to {obj_id} element, no such element")
+        logging.exception(
+            msg=f"Send key by ID to {obj_id} element, no such element")
         screenshot(obj_id)
         browser.refresh()
     except WebDriverException:
@@ -712,7 +718,8 @@ def iter_dailies():
         open_offers = browser.find_elements_by_xpath(
             '//span[contains(@class, "mee-icon-AddMedium")]'
         )
-        logging.info(msg=f"Number of incomplete offers remaining: {len(open_offers)}")
+        logging.info(
+            msg=f"Number of incomplete offers remaining: {len(open_offers)}")
     else:
         logging.info(msg="No dailies found.")
 
@@ -820,14 +827,16 @@ def drag_and_drop_quiz():
             right_answers = find_by_class("correctAnswer")
             # remove right answers from possible choices
             if right_answers:
-                drag_option = [x for x in drag_option if x not in right_answers]
+                drag_option = [
+                    x for x in drag_option if x not in right_answers]
             if drag_option:
                 # select first possible choice and remove from options
                 choice_a = random.choice(drag_option)
                 drag_option.remove(choice_a)
                 # select second possible choice from remaining options
                 choice_b = random.choice(drag_option)
-                ActionChains(browser).drag_and_drop(choice_a, choice_b).perform()
+                ActionChains(browser).drag_and_drop(
+                    choice_a, choice_b).perform()
         except (WebDriverException, TypeError):
             logging.debug(msg="Unknown Error.")
             continue
@@ -875,7 +884,8 @@ def get_point_total(pc=False, mobile=False, log=False):
 
     try:
         current_point_total = list(
-            map(int, browser.find_element_by_class_name("credits2").text.split(" of "))
+            map(int, browser.find_element_by_class_name(
+                "credits2").text.split(" of "))
         )[0]
         # get pc points
         current_pc_points, max_pc_points = map(
@@ -883,7 +893,8 @@ def get_point_total(pc=False, mobile=False, log=False):
         )
         # get mobile points
         current_mobile_points, max_mobile_points = map(
-            int, browser.find_element_by_class_name("mobilesearch").text.split("/")
+            int, browser.find_element_by_class_name(
+                "mobilesearch").text.split("/")
         )
         # get edge points
         # disabled because not detected in new point url
@@ -897,7 +908,8 @@ def get_point_total(pc=False, mobile=False, log=False):
         logging.info(msg=f"Total points = {current_point_total}")
         logging.info(msg=f"PC points = {current_pc_points}/{max_pc_points}")
         # logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
-        logging.info(msg=f"Mobile points = {current_mobile_points}/{max_mobile_points}")
+        logging.info(
+            msg=f"Mobile points = {current_mobile_points}/{max_mobile_points}")
 
     # if pc flag, check if pc and edge points met
     if pc:
@@ -991,7 +1003,8 @@ if __name__ == "__main__":
                     msg="-------------------------MOBILE-------------------------"
                 )
                 # set up headless browser and mobile user agent
-                browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
+                browser = browser_setup(
+                    parser.headless_setting, MOBILE_USER_AGENT)
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
@@ -1017,7 +1030,8 @@ if __name__ == "__main__":
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
-                logging.info(msg="-------------------------PC-------------------------")
+                logging.info(
+                    msg="-------------------------PC-------------------------")
                 # set up edge headless browser and edge pc user agent
                 browser = browser_setup(parser.headless_setting, PC_USER_AGENT)
                 try:
