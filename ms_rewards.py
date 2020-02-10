@@ -230,15 +230,15 @@ def download_driver(driver_path, system):
     r = requests.get(url)
     latest_version = r.text
     if system == "Windows":
-        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_win32.zip".format(
+        url = "https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_win32.zip".format(
             latest_version
         )
     elif system == "Darwin":
-        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_mac64.zip".format(
+        url = "https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_mac64.zip".format(
             latest_version
         )
     elif system == "Linux":
-        url = "https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip".format(
+        url = "https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip".format(
             latest_version
         )
 
