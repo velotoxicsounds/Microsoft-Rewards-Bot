@@ -494,7 +494,7 @@ def main_window():
     """
     try:
         for i in range(1, len(browser.window_handles)):
-            browser.switch_to.window(browser.window_handles[i])
+            browser.switch_to.window(browser.window_handles[-1])
             browser.close()
     except WebDriverException:
         logging.error('Error when switching to main_window')
@@ -613,8 +613,9 @@ def iter_dailies():
                 logging.debug(msg='Poll identified.')
                 daily_poll()
             # check for quiz by checking for ID
-            elif find_by_id('rqStartQuiz'):
-                click_by_id('rqStartQuiz')
+            elif (find_by_id('rqStartQuiz') or find_by_id('rqAnswerOptionNum0') or find_by_id('rqAnswerOption0')):
+                if find_by_id('rqStartQuiz'):
+                    click_by_id('rqStartQuiz')
                 # test for drag or drop or regular quiz
                 if find_by_id('rqAnswerOptionNum0'):
                     logging.debug(msg='Drag and Drop Quiz identified.')
@@ -913,7 +914,7 @@ if __name__ == '__main__':
                     # mobile search
                     search(search_list, mobile_search=True)
                     # get point totals if running just in mobile mode
-                    if not parser.pc_mode or not parser.quiz_mode or not parser.email_mode:
+                    if not parser.pc_mode and not parser.quiz_mode and not parser.email_mode:
                         get_point_total(mobile=True, log=True)
                     browser.quit()
                 except KeyboardInterrupt:
