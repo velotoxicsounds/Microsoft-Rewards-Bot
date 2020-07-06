@@ -16,12 +16,16 @@ This program will automatically complete search requests and quizzes on Microsof
 - Requests 2.21.0
 - Selenium 3.14.0
 - Chrome Browser
-## How to Use
+- telegram-send
+## How to Use#
 1.  Clone and navigate to repo
 2.  Modify `ms_rewards_login_dict.json` with your account names and passwords,
     remove `.example` from filename.
 3.  Enter into cmd/terminal/shell: `pip install -r requirements.txt`
     - This installs dependencies (selenium)
+    Setup Telegramchatbot: 
+	- Enter into cmd/terminal/shell: `sudo telegram-send --configure --global-config && telegram-send --configure`
+	- Follow Instruction to Set-Up Telegram Bot 
 4.  Enter into cmd/terminal/shell: `python ms_rewards.py --headless --mobile --pc --quiz`
     - enter `-h` or `--help` for more instructions
     - `--headless` is for headless mode
