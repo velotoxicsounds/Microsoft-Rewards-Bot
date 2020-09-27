@@ -11,6 +11,7 @@ logs/
 geckodriver.log
 .vs/
 NOTEPAD++-AUTOCONVERT.txt
+debug.log
 
 # JetBrains
 .idea/

@@ -4,3 +4,4 @@ urllib3==1.25.9
 lxml
 beautifulsoup4
 telegram-send
+fake-useragent

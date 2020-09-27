@@ -1,3 +1,7 @@
+**2020-10-27**
+
+    - General code revision. Telegram Bot. Fix for registration query, PC points FIX, mobile points FIX, EDGE points FIX, PC fakeuseragent random integrated
+
 **2019-07-09**
 
     - Fixed sporadic crashes caused by geolocation requests

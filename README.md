@@ -1,5 +1,10 @@
 # Microsoft-Rewards-Bot
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
+## Last-Update
+**2020-10-27**
+
+- General code revision. Telegram Bot. Fix for registration query, PC points FIX, mobile points FIX, EDGE points FIX, PC fakeuseragent random integrated
+
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
 ## Features
@@ -10,13 +15,15 @@ This program will automatically complete search requests and quizzes on Microsof
 - Supports unlimited accounts via JSON, in randomized order.
 - Randomized search speeds
 - Logs errors and info by default, can log executed commands and search terms by changing the log level to DEBUG
-- Tested and confirmed working for U.S. and U.K. (more to come!)
+- Tested and confirmed working for U.S. and U.K., GERMANY (more to come!)
+- Telegram-Integration
 ## Requirements
 - Python 3.6
 - Requests 2.21.0
 - Selenium 3.14.0
 - Chrome Browser
 - telegram-send
+- fake-useragent
 ## How to Use#
 1.  Clone and navigate to repo
 2.  Modify `ms_rewards_login_dict.json` with your account names and passwords,
@@ -55,21 +62,14 @@ This program will automatically complete search requests and quizzes on Microsof
       - Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
       - Change the paths to the json in the .py file to appropriate path
 ## To Do
-- Argparse for options: - logging - custom user agents
-- Rewrite script into class-based code or Organize monolithic code into
-  different py files for maintainability
-- os.environ variables for multiple logins (current account names and passwords
-  are too long)
 - Proxy support
 - Multithreaded mode or seleniumGrid
-- Support for other regions
-- Telegram Intergration for reporting bot status/total points.
+- NewStyle Coding
 ## License
 100% free to use and open source. :see_no_evil: :hear_no_evil: :speak_no_evil:
 ## Versions
 For a summary of changes in each version of the bot, please see the
-**[CHANGELOG](CHANGELOG.md).** Alternatively, a list of
-**[all commits to LjMario007/master](https://github.com/LjMario007/Microsoft-Rewards-Bot/commits/master)**
+**[CHANGELOG](CHANGELOG.md).**
 is also available.
 #### Special Thanks
 @ShoGinn - for extraordinary assistance in making this project better!

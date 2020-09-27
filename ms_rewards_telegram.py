@@ -768,8 +768,10 @@ def sign_in_prompt():
     sign_in_prompt_msg = find_by_class('bottom')
     if sign_in_prompt_msg:
         logging.info(msg='Detected sign-in prompt')
-        telegram_send.send(messages=['Detected sign-in prompt'])
-        browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
+        if browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
+            browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
+        if browser.find_element_by_link_text('Sign in'):
+            browser.find_element_by_link_text('Sign in').click()
         logging.info(msg='Clicked sign-in prompt')
         telegram_send.send(messages=['Clicked sign-in prompt'])
 
