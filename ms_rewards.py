@@ -32,6 +32,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
+import fake_useragent
+
 # URLs
 BING_SEARCH_URL = 'https://www.bing.com/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
