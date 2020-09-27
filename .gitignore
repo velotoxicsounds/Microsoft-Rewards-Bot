@@ -10,6 +10,7 @@ drivers/
 logs/
 geckodriver.log
 .vs/
+NOTEPAD++-AUTOCONVERT.txt
 
 # JetBrains
 .idea/
