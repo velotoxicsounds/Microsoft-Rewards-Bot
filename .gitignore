@@ -3,12 +3,13 @@
 email_links.txt
 
 # virtualenv
-venv/
+env/
 
 # Output artifacts
 drivers/
 logs/
 geckodriver.log
+.vs/
 
 # JetBrains
 .idea/
@@ -17,3 +18,7 @@ geckodriver.log
 *.pyc
 *.pyo
 .DS_Store
+__pycache__/
+
+# Macros
+Notepad++Macros/

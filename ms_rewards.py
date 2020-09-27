@@ -16,6 +16,8 @@ import time
 import zipfile
 import os
 from datetime import datetime, timedelta
+from fake_useragent import UserAgent
+
 
 import requests
 from requests.exceptions import RequestException
@@ -32,16 +34,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 # URLs
 BING_SEARCH_URL = 'https://www.bing.com/search'
-DASHBOARD_URL = 'https://account.microsoft.com/rewards/dashboard'
-POINT_TOTAL_URL = 'http://www.bing.com/rewardsapp/bepflyoutpage?style=chromeextension'
+DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
+POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
 
 # user agents for edge/pc and mobile
-PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                 'AppleWebKit/537.36 (KHTML, like Gecko) '
-                 'Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
-                     'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
-                     'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
+PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
+MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
+
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
@@ -135,7 +134,7 @@ def parse_args():
         help='Use MS Authenticator instead of a password for ALL accounts. Disables headless mode, default is off.')
     arg_parser.add_argument(
         '--log-level',
-        default='INFO',
+        default='DEBUG',
         dest='log_level',
         type=_log_level_string_to_int,
         help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
@@ -183,7 +182,7 @@ def get_search_terms():
                 add_new_search_term(search_terms, topic['title']['query'].lower())
                 for related_topic in topic['relatedQueries']:
                     add_new_search_term(search_terms, related_topic['query'].lower())
-            time.sleep(random.randint(3, 5))
+            time.sleep(0.4)
         except RequestException:
             logging.error('Error retrieving google trends json.')
         except KeyError:
@@ -275,30 +274,27 @@ def browser_setup(headless_mode, user_agent):
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
     browser.get('https://login.live.com/')
-    time.sleep(0.5)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
-    time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    time.sleep(10)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
-        time.sleep(0.5)
         wait_until_clickable(By.NAME, 'passwd', 10)
         send_key_by_name('passwd', pass_word)
         logging.debug(msg='Sent Password.')
         # wait for 'sign in' button to be clickable and sign in
-        time.sleep(0.5)
+        wait_until_visible(By.NAME, 'passwd', 10 )
         send_key_by_name('passwd', Keys.RETURN)
-        time.sleep(0.5)
+        wait_until_visible(By.ID, 'idSIButton9', 10)
+        click_by_id('idSIButton9')
         # Passwords only require the standard delay
-        wait_until_visible(By.ID, 'uhfLogo', 10)
+        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 20)
     else:
         # If using mobile 2FA, add a longer delay for sign in approval
-        wait_until_visible(By.ID, 'uhfLogo', 300)
+        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 300)
 
     time.sleep(0.5)
 
@@ -550,11 +546,11 @@ def search(search_terms, mobile_search=False):
         # ensure signed in not in mobile mode (pc mode doesn't register when searching)
         if not mobile_search:
             ensure_pc_mode_logged_in()
-
+        if mobile_search:
+            ensure_mobile_mode_logged_in()
         for num, item in search_terms:
             try:
                 # clears search bar and enters in next search term
-                time.sleep(1)
                 wait_until_visible(By.ID, 'sb_form_q', 15)
                 clear_by_id('sb_form_q')
                 send_key_by_id('sb_form_q', item)
@@ -562,7 +558,7 @@ def search(search_terms, mobile_search=False):
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
                 logging.debug(msg=f'Search #{num}: {item[:80]}')
-                time.sleep(random.randint(3, 4))  # random sleep for more human-like, and let ms reward website keep up.
+                time.sleep(random.randint(1, 3))
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
@@ -589,7 +585,6 @@ def iter_dailies():
     :return: None
     """
     browser.get(DASHBOARD_URL)
-    time.sleep(4)
     open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
     if open_offers:
         logging.info(msg=f'Number of open offers: {len(open_offers)}')
@@ -603,16 +598,14 @@ def iter_dailies():
         ]
         # iterate through the dailies
         for offer in offer_links:
-            time.sleep(3)
             logging.debug(msg='Detected offer.')
             # click and switch focus to latest window
             offer.click()
             latest_window()
-            time.sleep(5)
             # check for sign-in prompt
             sign_in_prompt()
             # check for poll by ID
-
+            time.sleep(1)
             if find_by_id('btoption0'):
                 logging.debug(msg='Poll identified.')
                 daily_poll()
@@ -638,7 +631,7 @@ def iter_dailies():
         # check at the end of the loop to log if any offers are remaining
         browser.get(DASHBOARD_URL)
         time.sleep(0.1)
-        wait_until_visible(By.TAG_NAME, 'body', 10)  # checks for page load
+        wait_until_visible(By.CSS_SELECTOR, "a#reward_pivot_earn > span", 10)
         open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
         logging.info(msg=f'Number of incomplete offers remaining: {len(open_offers)}')
     else:
@@ -669,11 +662,10 @@ def daily_poll():
     Randomly clicks a poll answer, returns to main window
     :return: None
     """
-    time.sleep(3)
     # click poll option
+    wait_until_visible(By.ID, 'btoption0', 10)
     choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
-    time.sleep(3)
     # close window, switch to main
     main_window()
 
@@ -682,21 +674,17 @@ def lightning_quiz():
     for question_round in range(10):
         logging.debug(msg=f'Round# {question_round}')
         if find_by_id('rqAnswerOption0'):
-            time.sleep(3)
             for i in range(10):
                 if find_by_id(f'rqAnswerOption{i}'):
                     browser.execute_script(f"document.querySelectorAll('#rqAnswerOption{i}').forEach(el=>el.click());")
                     logging.debug(msg=f'Clicked {i}')
-                    time.sleep(2)
         # let new page load
-        time.sleep(3)
         if find_by_id('quizCompleteContainer'):
             break
     # close the quiz completion splash
     quiz_complete = find_by_css('.cico.btCloseBack')
     if quiz_complete:
         quiz_complete[0].click()
-    time.sleep(3)
     main_window()
 
 
@@ -712,15 +700,13 @@ def click_quiz():
         # click answer
         if choices:
             random.choice(choices).click()
-            time.sleep(3)
         # click the 'next question' button
-        # wait_until_clickable(By.ID, 'check', 10)
-        wait_until_clickable(By.CLASS_NAME, 'wk_button', 10)
+        wait_until_clickable(By.CLASS_NAME, 'wk_buttons', 10)
         # click_by_id('check')
-        click_by_class('wk_button')
+        click_by_class('wk_buttons')
         # if the green check mark reward icon is visible, end loop
-        time.sleep(3)
-        if find_by_css('span[class="rw_icon"]'):
+        time.sleep(1)
+        if find_by_css('span[class="wk_SummaryHashTag"]'):
             break
     main_window()
 
@@ -750,26 +736,24 @@ def drag_and_drop_quiz():
             logging.debug(msg='Unknown Error.')
             continue
         finally:
-            time.sleep(3)
+            time.sleep(1)
             if find_by_id('quizCompleteContainer'):
                 break
     # close the quiz completion splash
-    time.sleep(3)
+    time.sleep(1)
     quiz_complete = find_by_css('.cico.btCloseBack')
     if quiz_complete:
         quiz_complete[0].click()
-    time.sleep(3)
+    time.sleep(1)
     main_window()
 
 
 def sign_in_prompt():
-    time.sleep(3)
-    sign_in_prompt_msg = find_by_class('simpleSignIn')
+    sign_in_prompt_msg = find_by_class('bottom')
     if sign_in_prompt_msg:
         logging.info(msg='Detected sign-in prompt')
-        browser.find_element_by_link_text('Sign in').click()
+        browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
         logging.info(msg='Clicked sign-in prompt')
-        time.sleep(4)
 
 
 def get_point_total(pc=False, mobile=False, log=False):
@@ -782,26 +766,26 @@ def get_point_total(pc=False, mobile=False, log=False):
     # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
 
     # TODO add a scroll to obj here
-    if not wait_until_visible(By.CLASS_NAME, 'pcsearch', 10):  # if object not found, return False
-        return False
+    wait_until_visible(By.CSS_SELECTOR, 'div#userPointsBreakdown > div > div:nth-of-type(2) > h2', 10) # if object not found, return False
     # returns None if pc search not found
     # pcsearch = browser.find_element_by_class_name('pcsearch')
     # if pcsearch.location_once_scrolled_into_view is None:  # property causes pc search to be scrolled into area
     #     return False
 
     try:
+        time.sleep(3)
         current_point_total = list(map(
-            int, browser.find_element_by_class_name('credits2').text.split(' of ')))[0]
+            int, browser.find_element_by_css_selector('#userBanner > mee-banner > div > div > div > div.info-columns > div:nth-child(3) > mee-banner-slot-4 > mee-rewards-user-status-item > mee-rewards-user-status-dailypoint > div > div > div > div > div > p.bold.number.margin-top-1 > mee-rewards-counter-animation > span > b').text))[0]
         # get pc points
+        time.sleep(3)
         current_pc_points, max_pc_points = map(
-            int, browser.find_element_by_class_name('pcsearch').text.split('/'))
+            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / '))
         # get mobile points
         current_mobile_points, max_mobile_points = map(
-            int, browser.find_element_by_class_name('mobilesearch').text.split('/'))
+            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / ', 1))
         # get edge points
-        # disabled because not detected in new point url
-        # current_edge_points, max_edge_points = map(
-        #     int, browser.find_element_by_class_name('edgesearch').text.split('/'))
+        current_edge_points, max_edge_points = map(
+            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-child(2) > div > div:nth-child(2) > div > div.pointsDetail > mee-rewards-user-points-details > div > div > div > div > p.pointsDetail.c-subheading-3.ng-binding').text.split(' / ', 1))
     except ValueError:
         return False
 
@@ -809,13 +793,13 @@ def get_point_total(pc=False, mobile=False, log=False):
     if log:
         logging.info(msg=f'Total points = {current_point_total}')
         logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-        # logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
+        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
         logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
 
     # if pc flag, check if pc and edge points met
     if pc:
-        # if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
-        if current_pc_points < max_pc_points:
+        if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
+        # if current_pc_points < max_pc_points:
             return False
         return True
     # if mobile flag, check if mobile points met
@@ -855,12 +839,28 @@ def ensure_pc_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
-    browser.get(BING_SEARCH_URL)
-    time.sleep(0.1)
+    # browser.get(BING_SEARCH_URL)
     # click on ribbon to ensure logged in
-    wait_until_clickable(By.ID, 'id_l', 15)
-    click_by_id('id_l')
+    # wait_until_clickable(By.ID, 'id_l', 15)
+    # click_by_id('id_l')
     time.sleep(0.1)
+
+def ensure_mobile_mode_logged_in():
+    """
+    Navigates to www.bing.com and clicks on ribbon to ensure logged in
+    PC mode for some reason sometimes does not fully recognize that the user is logged in
+    :return: None
+    """
+    browser.get(BING_SEARCH_URL)
+    # click on ribbon to ensure logged in
+    wait_until_clickable(By.ID, 'mHamburger', 15)
+    click_by_id('mHamburger')
+    if find_by_id('hb_s'):
+            click_by_id ('hb_s')
+    if find_by_id('id_l'):
+            click_by_id('id_l')
+    if find_by_class('hb_title_col'):
+            time.sleep(3)
 
 
 if __name__ == '__main__':
@@ -902,18 +902,15 @@ if __name__ == '__main__':
                 # MOBILE MODE
                 logging.info(msg='-------------------------MOBILE-------------------------')
                 # set up headless browser and mobile user agent
-                browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
-                    time.sleep(3)
                     try:
                         iter_dailies()
-                        time.sleep(3)
                         main_window()
                     except:
                         logging.info(msg=f'Mobile App Task not found')
-                    time.sleep(1)
                     browser.get(BING_SEARCH_URL)
                     # mobile search
                     search(search_list, mobile_search=True)
@@ -931,7 +928,8 @@ if __name__ == '__main__':
                 # PC MODE
                 logging.info(msg='-------------------------PC-------------------------')
                 # set up edge headless browser and edge pc user agent
-                browser = browser_setup(parser.headless_setting, PC_USER_AGENT)
+                #browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
+                browser = browser_setup(parser.headless_setting, 'ua.random')
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)

@@ -6,7 +6,7 @@
 # FIXME mobile version does not require re-sign in, but pc version does, why?
 # FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
 
-
+import telegram_send
 import argparse
 import json
 import logging
@@ -32,7 +32,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
-import telegram_send
 
 # URLs
 BING_SEARCH_URL = 'https://www.bing.com/search'
@@ -948,6 +947,7 @@ if __name__ == '__main__':
                     browser.quit()
                 except WebDriverException:
                     logging.info(msg=f'WebDriverException while executing mobile portion', exc_info=True)
+                    telegram_send.send(messages=[f'WebDriverException while executing mobile portion', exc_info=True])
                     browser.quit()
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
@@ -976,6 +976,7 @@ if __name__ == '__main__':
                     print('Stopping Script...')
                 except WebDriverException:
                     logging.error(msg=f'WebDriverException while executing pc portion', exc_info=True)
+                    telegram_send.send(messages=[msg=f'WebDriverException while executing pc portion', exc_info=True])
                 finally:
                     browser.quit()
     except WebDriverException:
