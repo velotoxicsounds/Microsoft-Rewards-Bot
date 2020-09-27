@@ -1,0 +1,15 @@
+enabled: true
+exclude:
+  - "**/*.patch"
+  - "**/node_modules/**/*"
+  - "**/vendor/**/*"
+  - ".github/workflows/**/*"
+auto: false
+pull_requests: true
+comments: false
+statuses:
+  differences: true     # Red when style differences are found
+  no_differences: true  # Green when no differences are found
+  error: true           # Red if we encounter errors restyling
+
+restylers_version: stable
