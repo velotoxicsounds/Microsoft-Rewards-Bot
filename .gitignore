@@ -3,7 +3,7 @@
 email_links.txt
 
 # virtualenv
-env/
+VIRTUALENV/
 
 # Output artifacts
 drivers/
@@ -21,6 +21,3 @@ debug.log
 *.pyo
 .DS_Store
 __pycache__/
-
-# Macros
-Notepad++Macros/

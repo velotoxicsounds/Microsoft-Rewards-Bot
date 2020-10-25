@@ -18,6 +18,8 @@ import zipfile
 import os
 from datetime import datetime, timedelta
 from fake_useragent import UserAgent
+import fake_useragent
+import telegram_send
 
 
 import requests
@@ -33,20 +35,21 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-import telegram_send
-import fake_useragent
-
 # URLs
 BING_SEARCH_URL = 'https://www.bing.com/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
 POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
 
-# user agents for edge/pc and mobile
-PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
-
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+
+# user agents for edge/pc and mobile
+PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                 'AppleWebKit/537.36 (KHTML, like Gecko) '
+                 'Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
+MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
+                     'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
+                     'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
 
 
 def check_python_version():
@@ -138,7 +141,7 @@ def parse_args():
         help='Use MS Authenticator instead of a password for ALL accounts. Disables headless mode, default is off.')
     arg_parser.add_argument(
         '--log-level',
-        default='DEBUG',
+        default='Info',
         dest='log_level',
         type=_log_level_string_to_int,
         help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
@@ -277,35 +280,50 @@ def browser_setup(headless_mode, user_agent):
 
     return chrome_obj
 
-
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
-    telegram_send.send(messages=[f'Logging in {email_address}...'])
     browser.get('https://login.live.com/')
+    time.sleep(0.5)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
+    time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
+    time.sleep(5)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
+        time.sleep(0.5)
         wait_until_clickable(By.NAME, 'passwd', 10)
         send_key_by_name('passwd', pass_word)
         logging.debug(msg='Sent Password.')
         # wait for 'sign in' button to be clickable and sign in
-        wait_until_visible(By.NAME, 'passwd', 10 )
+        time.sleep(0.5)
         send_key_by_name('passwd', Keys.RETURN)
-        wait_until_visible(By.ID, 'idSIButton9', 10)
-        click_by_id('idSIButton9')
+        time.sleep(0.5)
         # Passwords only require the standard delay
-        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 20)
+        # Added wait to click Yes to Stay signed in
+        if find_by_id('i0116'):
+            time.sleep(1)
+            click_by_id ('i0116')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('i0118'):
+            time.sleep(1)
+            click_by_id ('i0118')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
     else:
         # If using mobile 2FA, add a longer delay for sign in approval
-        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 300)
+        wait_until_visible(By.ID, 'uhfLogo', 300)
 
     time.sleep(0.5)
-
 
 def find_by_id(obj_id):
     """
@@ -539,11 +557,11 @@ def search(search_terms, mobile_search=False):
     :return: None
     """
     if mobile_search:
-        search_limit = 20
+        search_limit = 10
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
     else:
-        search_limit = 30
+        search_limit = 15
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
 
@@ -569,7 +587,9 @@ def search(search_terms, mobile_search=False):
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
                 logging.debug(msg=f'Search #{num}: {item[:80]}')
-                time.sleep(random.randint(1, 3))
+                time.sleep(0.5)
+                time.sleep(random.randint(0, 1))
+                time.sleep(0.1)
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
@@ -679,6 +699,7 @@ def daily_poll():
     :return: None
     """
     # click poll option
+    time.sleep(2)
     wait_until_visible(By.ID, 'btoption0', 10)
     choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
@@ -768,9 +789,9 @@ def sign_in_prompt():
     sign_in_prompt_msg = find_by_class('bottom')
     if sign_in_prompt_msg:
         logging.info(msg='Detected sign-in prompt')
-        if browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
+        if browser.find_elements_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
             browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
-        if browser.find_element_by_link_text('Sign in'):
+        if browser.find_elements_by_link_text('Sign in'):
             browser.find_element_by_link_text('Sign in').click()
         logging.info(msg='Clicked sign-in prompt')
         telegram_send.send(messages=['Clicked sign-in prompt'])
@@ -799,13 +820,13 @@ def get_point_total(pc=False, mobile=False, log=False):
         # get pc points
         time.sleep(3)
         current_pc_points, max_pc_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / '))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / '))
         # get mobile points
         current_mobile_points, max_mobile_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / ', 1))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
         # get edge points
         current_edge_points, max_edge_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-child(2) > div > div:nth-child(2) > div > div.pointsDetail > mee-rewards-user-points-details > div > div > div > div > p.pointsDetail.c-subheading-3.ng-binding').text.split(' / ', 1))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
     except ValueError:
         return False
 
@@ -877,17 +898,25 @@ def ensure_mobile_mode_logged_in():
     """
     browser.get(BING_SEARCH_URL)
     # click on ribbon to ensure logged in
-    wait_until_clickable(By.ID, 'mHamburger', 15)
-    click_by_id('mHamburger')
+    wait_until_visible(By.ID, 'mHamburger', 8)
+    time.sleep(1)
     if find_by_id('hb_s'):
-            click_by_id ('hb_s')
+        time.sleep(1)
+        click_by_id ('hb_s')
     if find_by_id('id_l'):
-            click_by_id('id_l')
+        time.sleep(1)
+        click_by_id('id_l')
     if find_by_class('hb_title_col'):
-            time.sleep(3)
+        time.sleep(3)
 
 
 if __name__ == '__main__':
+    from fake_useragent import FakeUserAgentError
+
+    try:
+        ua = UserAgent()
+    except FakeUserAgentError:
+        pass
     check_python_version()
     if os.path.exists("drivers/chromedriver.exe"):
         update_driver()
@@ -897,12 +926,8 @@ if __name__ == '__main__':
 
         # start logging
         init_logging(log_level=parser.log_level)
-        logging.info(msg='--------------------------------------------------')
-        telegram_send.send(messages=['--------------------------------------------------'])
         logging.info(msg='-----------------------New------------------------')
         telegram_send.send(messages=['-----------------------New------------------------'])
-        logging.info(msg='--------------------------------------------------')
-        telegram_send.send(messages=['--------------------------------------------------'])
 
         # get login dict
         login_dict = get_login_info()
@@ -928,10 +953,11 @@ if __name__ == '__main__':
 
             if parser.mobile_mode:
                 # MOBILE MODE
-                logging.info(msg='-------------------------MOBILE-------------------------')
-                telegram_send.send(messages=['-------------------------MOBILE-------------------------'])
+                logging.info(msg='----Tarne Smartphone-Browser----')
+                telegram_send.send(messages=['----Tarne Smartphone-Browser----'])
                 # set up headless browser and mobile user agent
-                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
+                browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
+                telegram_send.send(messages=[MOBILE_USER_AGENT])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
@@ -956,11 +982,11 @@ if __name__ == '__main__':
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
-                logging.info(msg='-------------------------PC-------------------------')
-                telegram_send.send(messages=['-------------------------PC-------------------------'])
+                logging.info(msg='----Tarne PC-Browser----')
+                telegram_send.send(messages=['----Tarne PC-Browser----'])
                 # set up edge headless browser and edge pc user agent
-                #browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-                browser = browser_setup(parser.headless_setting, 'ua.random')
+                browser = browser_setup(parser.headless_setting, "ua.edge")
+                telegram_send.send(messages=[ua.edge])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
