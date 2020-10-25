@@ -276,27 +276,45 @@ def browser_setup(headless_mode, user_agent):
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
     browser.get('https://login.live.com/')
+    time.sleep(0.5)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
+    time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
+    time.sleep(5)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
+        time.sleep(0.5)
         wait_until_clickable(By.NAME, 'passwd', 10)
         send_key_by_name('passwd', pass_word)
         logging.debug(msg='Sent Password.')
         # wait for 'sign in' button to be clickable and sign in
-        wait_until_visible(By.NAME, 'passwd', 10 )
+        time.sleep(0.5)
         send_key_by_name('passwd', Keys.RETURN)
-        wait_until_visible(By.ID, 'idSIButton9', 10)
-        click_by_id('idSIButton9')
+        time.sleep(0.5)
         # Passwords only require the standard delay
-        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 20)
+        # Added wait to click Yes to Stay signed in
+        if find_by_id('i0116'):
+            time.sleep(1)
+            click_by_id ('i0116')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('i0118'):
+            time.sleep(1)
+            click_by_id ('i0118')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
     else:
         # If using mobile 2FA, add a longer delay for sign in approval
-        wait_until_visible(By.CSS_SELECTOR, 'div#navs > div > div > div > a', 300)
+        wait_until_visible(By.ID, 'uhfLogo', 300)
 
     time.sleep(0.5)
 
@@ -784,13 +802,13 @@ def get_point_total(pc=False, mobile=False, log=False):
         # get pc points
         time.sleep(3)
         current_pc_points, max_pc_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / '))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / '))
         # get mobile points
         current_mobile_points, max_mobile_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(2) > mee-rewards-user-points-details > div > div > div > div > p:nth-of-type(2)').text.split(' / ', 1))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
         # get edge points
         current_edge_points, max_edge_points = map(
-            int, browser.find_element_by_css_selector('div#userPointsBreakdown > div > div:nth-child(2) > div > div:nth-child(2) > div > div.pointsDetail > mee-rewards-user-points-details > div > div > div > div > p.pointsDetail.c-subheading-3.ng-binding').text.split(' / ', 1))
+            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
     except ValueError:
         return False
 
@@ -812,6 +830,7 @@ def get_point_total(pc=False, mobile=False, log=False):
         if current_mobile_points < max_mobile_points:
             return False
         return True
+
 
 
 def get_email_links():

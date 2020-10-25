@@ -44,12 +44,8 @@ POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
 # user agents for edge/pc and mobile
-PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                 'AppleWebKit/537.36 (KHTML, like Gecko) '
-                 'Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-MOBILE_USER_AGENT = ('Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; WebView/3.0) '
-                     'AppleWebKit/537.36 (KHTML, like Gecko) coc_coc_browser/64.118.222 '
-                     'Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.15063')
+PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763')
+MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
 
 
 def check_python_version():
@@ -956,8 +952,8 @@ if __name__ == '__main__':
                 logging.info(msg='----Tarne Smartphone-Browser----')
                 telegram_send.send(messages=['----Tarne Smartphone-Browser----'])
                 # set up headless browser and mobile user agent
-                browser = browser_setup(parser.headless_setting, MOBILE_USER_AGENT)
-                telegram_send.send(messages=[MOBILE_USER_AGENT])
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
+                telegram_send.send(messages=['Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330'])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
@@ -985,8 +981,8 @@ if __name__ == '__main__':
                 logging.info(msg='----Tarne PC-Browser----')
                 telegram_send.send(messages=['----Tarne PC-Browser----'])
                 # set up edge headless browser and edge pc user agent
-                browser = browser_setup(parser.headless_setting, "ua.edge")
-                telegram_send.send(messages=[ua.edge])
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763')
+                telegram_send.send(messages=['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763'])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
