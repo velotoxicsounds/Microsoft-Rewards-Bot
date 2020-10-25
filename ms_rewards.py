@@ -35,7 +35,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import fake_useragent
 
 # URLs
-BING_SEARCH_URL = 'https://www.bing.com/search'
+BING_SEARCH_URL = 'https://www.bing.com/?setlang=en/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
 POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
 
@@ -877,14 +877,19 @@ def ensure_mobile_mode_logged_in():
     """
     browser.get(BING_SEARCH_URL)
     # click on ribbon to ensure logged in
-    wait_until_clickable(By.ID, 'mHamburger', 15)
-    click_by_id('mHamburger')
+    #NEWCODE
+
+    ##OLDCODE
+    wait_until_visible(By.ID, 'mHamburger', 8)
+    time.sleep(1)
     if find_by_id('hb_s'):
-            click_by_id ('hb_s')
+        time.sleep(1)
+        click_by_id ('hb_s')
     if find_by_id('id_l'):
-            click_by_id('id_l')
+        time.sleep(1)
+        click_by_id('id_l')
     if find_by_class('hb_title_col'):
-            time.sleep(3)
+        time.sleep(3)
 
 
 if __name__ == '__main__':

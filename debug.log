@@ -76,3 +76,15 @@
 [1025/145218.561:ERROR:exception_snapshot_win.cc(99)] thread ID 2872 not found in process
 [1025/145218.592:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
 [1025/145218.592:ERROR:exception_snapshot_win.cc(99)] thread ID 5780 not found in process
+[1025/185434.659:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185434.660:ERROR:exception_snapshot_win.cc(99)] thread ID 18316 not found in process
+[1025/185434.676:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185434.676:ERROR:exception_snapshot_win.cc(99)] thread ID 3732 not found in process
+[1025/185434.703:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185434.703:ERROR:exception_snapshot_win.cc(99)] thread ID 20600 not found in process
+[1025/185434.748:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185434.748:ERROR:exception_snapshot_win.cc(99)] thread ID 6980 not found in process
+[1025/185434.785:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185434.785:ERROR:exception_snapshot_win.cc(99)] thread ID 6360 not found in process
+[1025/185439.835:ERROR:process_reader_win.cc(123)] NtOpenThread: {Zugriff verweigert} Ein Prozess hat einen Zugriff auf ein Objekt angefordert, aber ihm wurden nicht die Rechte für den Zugriff erteilt. (0xc0000022)
+[1025/185439.835:ERROR:exception_snapshot_win.cc(99)] thread ID 22920 not found in process
