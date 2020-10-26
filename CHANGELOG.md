@@ -1,4 +1,14 @@
-**2020-10-27**
+**2020/10/26**
+    
+    - Second login function built-in for Bing search (name: log_in_2(email_address, pass_word)
+    - Microsoft Edge Search works again, new UserAgent is inserted. Idea: implement ua.random as well as filters for Edge Browser useragents
+    - Current error: The Bing Rewards queries for mobile devices have a gateway error, where the new login (log_in_2) must be implemented.
+
+**2020.10.25**
+
+    - Login Fixed [USE NOW ID LOCATOR], Read Points FIX [USE NOW XPATH], OPEN ERROR: Unlimited Mobile Searches, Need Useragent FIX
+
+**2020-09-27**
 
     - General code revision. Telegram Bot. Fix for registration query, PC points FIX, mobile points FIX, EDGE points FIX, PC fakeuseragent random integrated
 
