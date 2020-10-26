@@ -3,6 +3,7 @@
     - Second login function built-in for Bing search (name: log_in_2(email_address, pass_word)
     - Microsoft Edge Search works again, new UserAgent is inserted. Idea: implement ua.random as well as filters for Edge Browser useragents
     - Current error: The Bing Rewards queries for mobile devices have a gateway error, where the new login (log_in_2) must be implemented.
+    - New login method works with any language (Works via link URL)
 
 **2020.10.25**
 
