@@ -4,6 +4,7 @@
     - Microsoft Edge Search works again, new UserAgent is inserted. Idea: implement ua.random as well as filters for Edge Browser useragents
     - Current error: The Bing Rewards queries for mobile devices have a gateway error, where the new login (log_in_2) must be implemented.
     - New login method works with any language (Works via link URL)
+    - Ensure_mobile_mode_logged_in/ensure_pc_mode_logged_in function revised. New login function implemented. Thus, the account is logged in again for the Bing search. As a result, the points are again allocated
 
 **2020.10.25**
 
