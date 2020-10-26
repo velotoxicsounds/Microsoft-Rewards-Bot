@@ -39,6 +39,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 BING_SEARCH_URL = 'https://www.bing.com/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
 POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
+BING_LOGOUT = 'https://login.live.com/logout.srf?ru=https%3A%2F%2Foutlook.live.com%2Fmail%2F0%2Finbox'
+BING_SET_US = 'https://www.bing.com/?setlang=en'
 
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
@@ -279,6 +281,49 @@ def browser_setup(headless_mode, user_agent):
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
     browser.get('https://login.live.com/')
+    time.sleep(0.5)
+    # wait for login form and enter email
+    wait_until_clickable(By.NAME, 'loginfmt', 10)
+    send_key_by_name('loginfmt', email_address)
+    time.sleep(0.5)
+    send_key_by_name('loginfmt', Keys.RETURN)
+    logging.debug(msg='Sent Email Address.')
+    time.sleep(5)
+
+    if not parser.use_authenticator:
+        # wait for password form and enter password
+        time.sleep(0.5)
+        wait_until_clickable(By.NAME, 'passwd', 10)
+        send_key_by_name('passwd', pass_word)
+        logging.debug(msg='Sent Password.')
+        # wait for 'sign in' button to be clickable and sign in
+        time.sleep(0.5)
+        send_key_by_name('passwd', Keys.RETURN)
+        time.sleep(0.5)
+        # Passwords only require the standard delay
+        # Added wait to click Yes to Stay signed in
+        if find_by_id('i0116'):
+            time.sleep(1)
+            click_by_id ('i0116')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('i0118'):
+            time.sleep(1)
+            click_by_id ('i0118')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+    else:
+        # If using mobile 2FA, add a longer delay for sign in approval
+        wait_until_visible(By.ID, 'uhfLogo', 300)
+
+    time.sleep(0.5)
+
+def log_in_2(email_address, pass_word):
     time.sleep(0.5)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
@@ -884,7 +929,19 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
-    time.sleep(0.1)
+    time.sleep(1)
+    browser.get(BING_LOGOUT)
+    time.sleep(1)
+    browser.get(BING_SEARCH_URL)
+    time.sleep(1)
+    browser.get(BING_SET_US)
+    time.sleep(1)
+    if find_by_id('id_s'):
+        time.sleep(1)
+        click_by_id('id_s')
+    time.sleep(0.5)
+    log_in_2(email, password)
+    time.sleep(5)
 
 def ensure_mobile_mode_logged_in():
     """
@@ -892,18 +949,24 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
+    time.sleep(1)
+    browser.get(BING_LOGOUT)
+    time.sleep(1)
     browser.get(BING_SEARCH_URL)
+    time.sleep(1)
+    browser.get(BING_SET_US)
+    time.sleep(1)
     # click on ribbon to ensure logged in
     wait_until_visible(By.ID, 'mHamburger', 8)
     time.sleep(1)
-    if find_by_id('hb_s'):
+    if find_by_id('mHamburger'):
+        time.sleep(1)
+        click_by_id ('mHamburger')
         time.sleep(1)
         click_by_id ('hb_s')
-    if find_by_id('id_l'):
         time.sleep(1)
-        click_by_id('id_l')
-    if find_by_class('hb_title_col'):
-        time.sleep(3)
+        log_in_2(email, password)
+        time.sleep(5)
 
 
 if __name__ == '__main__':
@@ -980,9 +1043,10 @@ if __name__ == '__main__':
                 # PC MODE
                 logging.info(msg='----Tarne PC-Browser----')
                 telegram_send.send(messages=['----Tarne PC-Browser----'])
+                ua.update()
                 # set up edge headless browser and edge pc user agent
-                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763')
-                telegram_send.send(messages=['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763'])
+                browser = browser_setup(parser.headless_setting, ua.random)
+                telegram_send.send(messages=[ua.random])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)

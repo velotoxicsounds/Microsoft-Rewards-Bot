@@ -6,6 +6,7 @@
 # FIXME mobile version does not require re-sign in, but pc version does, why?
 # FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
 
+
 import argparse
 import json
 import logging
@@ -17,6 +18,7 @@ import zipfile
 import os
 from datetime import datetime, timedelta
 from fake_useragent import UserAgent
+import fake_useragent
 
 
 import requests
@@ -32,19 +34,19 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-import fake_useragent
-
 # URLs
-BING_SEARCH_URL = 'https://www.bing.com/?setlang=en/search'
+BING_SEARCH_URL = 'https://www.bing.com/search'
 DASHBOARD_URL = 'https://account.microsoft.com/rewards/'
 POINT_TOTAL_URL = 'https://account.microsoft.com/rewards/pointsbreakdown'
-
-# user agents for edge/pc and mobile
-PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
+BING_LOGOUT = 'https://login.live.com/logout.srf?ru=https%3A%2F%2Foutlook.live.com%2Fmail%2F0%2Finbox'
+BING_SET_US = 'https://www.bing.com/?setlang=en'
 
 # log levels
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
+
+# user agents for edge/pc and mobile
+PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 Edg/86.0.622.51')
+MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
 
 
 def check_python_version():
@@ -136,7 +138,7 @@ def parse_args():
         help='Use MS Authenticator instead of a password for ALL accounts. Disables headless mode, default is off.')
     arg_parser.add_argument(
         '--log-level',
-        default='DEBUG',
+        default='Info',
         dest='log_level',
         type=_log_level_string_to_int,
         help=f'Set the logging output level. {_LOG_LEVEL_STRINGS}')
@@ -272,7 +274,6 @@ def browser_setup(headless_mode, user_agent):
 
     return chrome_obj
 
-
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
     browser.get('https://login.live.com/')
@@ -318,6 +319,48 @@ def log_in(email_address, pass_word):
 
     time.sleep(0.5)
 
+def log_in_2(email_address, pass_word):
+    time.sleep(0.5)
+    # wait for login form and enter email
+    wait_until_clickable(By.NAME, 'loginfmt', 10)
+    send_key_by_name('loginfmt', email_address)
+    time.sleep(0.5)
+    send_key_by_name('loginfmt', Keys.RETURN)
+    logging.debug(msg='Sent Email Address.')
+    time.sleep(5)
+
+    if not parser.use_authenticator:
+        # wait for password form and enter password
+        time.sleep(0.5)
+        wait_until_clickable(By.NAME, 'passwd', 10)
+        send_key_by_name('passwd', pass_word)
+        logging.debug(msg='Sent Password.')
+        # wait for 'sign in' button to be clickable and sign in
+        time.sleep(0.5)
+        send_key_by_name('passwd', Keys.RETURN)
+        time.sleep(0.5)
+        # Passwords only require the standard delay
+        # Added wait to click Yes to Stay signed in
+        if find_by_id('i0116'):
+            time.sleep(1)
+            click_by_id ('i0116')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('i0118'):
+            time.sleep(1)
+            click_by_id ('i0118')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+        if find_by_id('idSIButton9'):
+            time.sleep(1)
+            click_by_id ('idSIButton9')
+    else:
+        # If using mobile 2FA, add a longer delay for sign in approval
+        wait_until_visible(By.ID, 'uhfLogo', 300)
+
+    time.sleep(0.5)
 
 def find_by_id(obj_id):
     """
@@ -550,11 +593,11 @@ def search(search_terms, mobile_search=False):
     :return: None
     """
     if mobile_search:
-        search_limit = 20
+        search_limit = 10
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
     else:
-        search_limit = 30
+        search_limit = 15
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
 
@@ -578,7 +621,9 @@ def search(search_terms, mobile_search=False):
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
                 logging.debug(msg=f'Search #{num}: {item[:80]}')
-                time.sleep(random.randint(1, 3))
+                time.sleep(0.5)
+                time.sleep(random.randint(0, 1))
+                time.sleep(0.1)
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
@@ -683,6 +728,7 @@ def daily_poll():
     :return: None
     """
     # click poll option
+    time.sleep(2)
     wait_until_visible(By.ID, 'btoption0', 10)
     choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
@@ -772,9 +818,9 @@ def sign_in_prompt():
     sign_in_prompt_msg = find_by_class('bottom')
     if sign_in_prompt_msg:
         logging.info(msg='Detected sign-in prompt')
-        if browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
+        if browser.find_elements_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
             browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
-        if browser.find_element_by_link_text('Sign in'):
+        if browser.find_elements_by_link_text('Sign in'):
             browser.find_element_by_link_text('Sign in').click()
         logging.info(msg='Clicked sign-in prompt')
 
@@ -832,7 +878,6 @@ def get_point_total(pc=False, mobile=False, log=False):
         return True
 
 
-
 def get_email_links():
     """
     Gets the email links from the text file, appends to a list
@@ -867,7 +912,19 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
-    time.sleep(0.1)
+    time.sleep(1)
+    browser.get(BING_LOGOUT)
+    time.sleep(1)
+    browser.get(BING_SEARCH_URL)
+    time.sleep(1)
+    browser.get(BING_SET_US)
+    time.sleep(1)
+    if find_by_id('id_s'):
+        time.sleep(1)
+        click_by_id('id_s')
+    time.sleep(0.5)
+    log_in_2(email, password)
+    time.sleep(5)
 
 def ensure_mobile_mode_logged_in():
     """
@@ -875,24 +932,33 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
+    time.sleep(1)
+    browser.get(BING_LOGOUT)
+    time.sleep(1)
     browser.get(BING_SEARCH_URL)
+    time.sleep(1)
+    browser.get(BING_SET_US)
+    time.sleep(1)
     # click on ribbon to ensure logged in
-    #NEWCODE
-
-    ##OLDCODE
     wait_until_visible(By.ID, 'mHamburger', 8)
     time.sleep(1)
-    if find_by_id('hb_s'):
+    if find_by_id('mHamburger'):
+        time.sleep(1)
+        click_by_id ('mHamburger')
         time.sleep(1)
         click_by_id ('hb_s')
-    if find_by_id('id_l'):
         time.sleep(1)
-        click_by_id('id_l')
-    if find_by_class('hb_title_col'):
-        time.sleep(3)
+        log_in_2(email, password)
+        time.sleep(5)
 
 
 if __name__ == '__main__':
+    from fake_useragent import FakeUserAgentError
+
+    try:
+        ua = UserAgent()
+    except FakeUserAgentError:
+        pass
     check_python_version()
     if os.path.exists("drivers/chromedriver.exe"):
         update_driver()
@@ -902,9 +968,7 @@ if __name__ == '__main__':
 
         # start logging
         init_logging(log_level=parser.log_level)
-        logging.info(msg='--------------------------------------------------')
         logging.info(msg='-----------------------New------------------------')
-        logging.info(msg='--------------------------------------------------')
 
         # get login dict
         login_dict = get_login_info()
@@ -929,9 +993,9 @@ if __name__ == '__main__':
 
             if parser.mobile_mode:
                 # MOBILE MODE
-                logging.info(msg='-------------------------MOBILE-------------------------')
+                logging.info(msg='----Tarne Smartphone-Browser----')
                 # set up headless browser and mobile user agent
-                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 6.0.1; RedMi Note 5 Build/RB3N5C; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.91 Mobile Safari/537.36')
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
@@ -955,10 +1019,10 @@ if __name__ == '__main__':
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
-                logging.info(msg='-------------------------PC-------------------------')
+                logging.info(msg='----Tarne PC-Browser----')
+                ua.update()
                 # set up edge headless browser and edge pc user agent
-                #browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134')
-                browser = browser_setup(parser.headless_setting, 'ua.random')
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 Edg/86.0.622.51')
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
