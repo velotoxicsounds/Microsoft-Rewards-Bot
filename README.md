@@ -7,6 +7,7 @@ Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written i
 - Current error: The Bing Rewards queries for mobile devices have a gateway error, where the new login (log_in_2) must be implemented.
 - New login method works with any language (Works via link URL)
 - Ensure_mobile_mode_logged_in/ensure_pc_mode_logged_in function revised. New login function implemented. Thus, the account is logged in again for the Bing search. As a result, the points are again allocated
+- Update Readme (Add Windows Function)
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
@@ -34,7 +35,8 @@ This program will automatically complete search requests and quizzes on Microsof
 3.  Enter into cmd/terminal/shell: `pip install -r requirements.txt`
     - This installs dependencies (selenium)
     Setup Telegramchatbot: 
-	- Enter into cmd/terminal/shell: `sudo telegram-send --configure --global-config && telegram-send --configure`
+	- Enter into LINUX terminal/shell: `sudo telegram-send --configure --global-config && telegram-send --configure`
+    - Enter into WINDOWS CMD: `telegram-send --configure --global-config && telegram-send --configure`
 	- Follow Instruction to Set-Up Telegram Bot 
 4.  Enter into cmd/terminal/shell: `python ms_rewards.py --headless --mobile --pc --quiz`
     - enter `-h` or `--help` for more instructions
@@ -64,9 +66,15 @@ This program will automatically complete search requests and quizzes on Microsof
     - Enter in terminal: `0 12 * * * /path/to/python /path/to/ms_rewards.py --headless --mobile --pc --quiz`
       - Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
       - Change the paths to the json in the .py file to appropriate path
+7.  Add the Bat file to your Windows Task Scheduler (Optional for automated script daily on Windows)
+    - Start Windows Task Schedule
+    - Click "Create A Simple Task"
+    - Name: MS-RewardBot
+    - Change to Daily
+    - Click Continue until you arrive at "Select Program"
+    - Click Finish
+
 ## To Do
-- Proxy support
-- Multithreaded mode or seleniumGrid
 - NewStyle Coding
 ## License
 100% free to use and open source. :see_no_evil: :hear_no_evil: :speak_no_evil:
