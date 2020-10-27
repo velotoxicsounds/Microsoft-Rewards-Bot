@@ -5,6 +5,7 @@
 # TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
 # FIXME mobile version does not require re-sign in, but pc version does, why?
 # FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
+# ADD Cookie Acception to Ensure PC LOGIN
 
 
 import argparse
@@ -643,7 +644,6 @@ def search(search_terms, mobile_search=False):
         for num, item in search_terms:
             try:
                 # clears search bar and enters in next search term
-                time.sleep(3)
                 wait_until_visible(By.ID, 'sb_form_q', 15)
                 clear_by_id('sb_form_q')
                 send_key_by_id('sb_form_q', item)
@@ -658,14 +658,14 @@ def search(search_terms, mobile_search=False):
                 if num % search_limit == 0:
                     if mobile_search:
                         # in mobile mode, get point total does not work if no search is done, URL = 404
-                        if get_point_total(mobile=True):
+                        if get_point_total(mobile=True, log=True):
                             logging.info(msg=f'-->Stopped at search number {num}')
                             telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         # if point total not met, return to search page
                         browser.get(BING_SEARCH_URL)
                     else:
-                        if get_point_total(pc=True):
+                        if get_point_total(pc=True, log=True):
                             logging.info(msg=f'--> Stopped at search number {num}')
                             telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
@@ -964,11 +964,9 @@ def ensure_pc_mode_logged_in():
     browser.get(BING_LOGOUT)
     browser.get(BING_SEARCH_URL)
     browser.get(BING_SET_US)
-    time.sleep(1)
     if find_by_id('id_s'):
         time.sleep(1)
-        click_by_id('id_s')
-    time.sleep(0.5)
+    find
     log_in_2(email, password)
     time.sleep(5)
 
@@ -982,8 +980,8 @@ def ensure_mobile_mode_logged_in():
     browser.get(BING_LOGOUT)
     browser.get(BING_SEARCH_URL)
     browser.get(BING_SET_US)
+    time.sleep(3)
     # click on ribbon to ensure logged in
-    time.sleep(1)
     wait_until_visible(By.ID, 'mHamburger', 8)
     time.sleep(1)
     if find_by_id('mHamburger'):
@@ -1072,9 +1070,9 @@ if __name__ == '__main__':
                 logging.info(msg='--> PC-MODE')
                 #ua.update()
                 # set up edge headless browser and edge pc user agent
-                browser = browser_setup(parser.headless_setting, ua.random)
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763')
                 telegram_send.send(messages=['--> PC-MODE'])
-                telegram_send.send(messages=[ua.random])
+                telegram_send.send(messages=['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763'])
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)
