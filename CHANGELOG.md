@@ -1,5 +1,4 @@
-**2020/10/26**
-    
+**2020.10.26**
     - Second login function built-in for Bing search (name: log_in_2(email_address, pass_word)
     - Microsoft Edge Search works again, new UserAgent is inserted. Idea: implement ua.random as well as filters for Edge Browser useragents
     - Current error: The Bing Rewards queries for mobile devices have a gateway error, where the new login (log_in_2) must be implemented.
@@ -11,6 +10,9 @@
     - #ua.update(). Requires timer for maximum every 12h update
     - Login Password TimeSleep Set to 1
     - Add Telegram E-Mail Output
+    - Telegram version now outputs DEBUG data. (TextFormat implemented)
+    - Time Sleep removed from Ensure_mobile_mode_logged_in/ensure_pc_mode_logged_in, faster login
+    - Login2 function TimeSleep extended for the correct finding of the elements
 
 **2020.10.25**
 

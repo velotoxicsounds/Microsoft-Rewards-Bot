@@ -195,8 +195,8 @@ def get_search_terms():
             logging.error('Cannot parse, JSON keys are modified.')
             telegram_send.send(messages=['Cannot parse, JSON keys are modified.'])
     # get unique terms and return a list
-    logging.info(msg=f'# of search items: {len(search_terms)}\n')
-    telegram_send.send(messages=[f'# of search items: {len(search_terms)}\n'])
+    logging.info(msg=f'----[of search items: {len(search_terms)}]----')
+    telegram_send.send(messages=[f'----[of search items: {len(search_terms)}]----'])
     return list(set(search_terms))
 
 
@@ -279,8 +279,8 @@ def browser_setup(headless_mode, user_agent):
     return chrome_obj
 
 def log_in(email_address, pass_word):
-    logging.info(msg=f'Logging in {email_address}...')
-    telegram_send.send(messages=[f'Logging in {email_address}'])
+    logging.info(msg=f'----[Logging in {email_address}]----')
+    telegram_send.send(messages=[f'----[Logging in {email_address}]----'])
     browser.get('https://login.live.com/')
     time.sleep(0.5)
     # wait for login form and enter email
@@ -325,8 +325,8 @@ def log_in(email_address, pass_word):
     time.sleep(0.5)
 
 def log_in_2(email_address, pass_word):
-    time.sleep(0.5)
-    telegram_send.send(messages=[f'Logging in {email_address}'])
+    time.sleep(3)
+    telegram_send.send(messages=[f'--> Run 2nd Login Phrase'])
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
@@ -415,17 +415,20 @@ def find_by_css(selector):
 #     try:
 #         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
 #     except TimeoutException:
-#         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
+#         logging.exception(msg=f'---> {selector} element Not Visible - Timeout Exception', exc_info=False)
+#         telegram_send.send(messages=[f'---> {selector} element Not Visible - Timeout Exception', exc_info=False])
 #         screenshot(selector)
 #         browser.refresh()
 #     except UnexpectedAlertPresentException:
 #         # FIXME
 #         browser.switch_to.alert.dismiss()
-#         # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+#         # logging.exception(msg=f'---> {selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+#         # telegram_send.send(messages=[f'---> {selector} element Not Visible - Unexpected Alert Exception', exc_info=False])
 #         # screenshot(selector)
 #         # browser.refresh()
 #     except WebDriverException:
-#         logging.exception(msg=f'Webdriver Error for {selector} object')
+#         logging.exception(msg=f'---> Webdriver Error for {selector} object')
+#         telegram_send.send(messages=[f'---> Webdriver Error for {selector} object'])
 #         screenshot(selector)
 #         browser.refresh()
 
@@ -459,16 +462,19 @@ def wait_until_clickable(by_, selector, time_to_wait=10):
     try:
         WebDriverWait(browser, time_to_wait).until(ec.element_to_be_clickable((by_, selector)))
     except TimeoutException:
-        logging.exception(msg=f'{selector} element Not clickable - Timeout Exception', exc_info=False)
+        logging.exception(msg=f'---> {selector} element Not clickable - Timeout Exception', exc_info=False)
+        telegram_send.send(messages=[f'---> {selector} element Not clickable - Timeout Exception'])
         screenshot(selector)
     except UnexpectedAlertPresentException:
         # FIXME
         browser.switch_to.alert.dismiss()
-        # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+        # logging.exception(msg=f'---> {selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
+        # telegram_send.send(messages=[f'---> {selector} element Not Visible - Unexpected Alert Exception', exc_info=False])
         # screenshot(selector)
         # browser.refresh()
     except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for {selector} object')
+        logging.exception(msg=f'---> Webdriver Error for {selector} object')
+        telegram_send.send(messages=[f'---> Webdriver Error for {selector} object'])
         screenshot(selector)
 
 
@@ -482,13 +488,16 @@ def send_key_by_name(name, key):
     try:
         browser.find_element_by_name(name).send_keys(key)
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
-        logging.exception(msg=f'Send key by name to {name} element not visible or clickable.')
+        logging.exception(msg=f'---> Send key by name to {name} element not visible or clickable.')
+        telegram_send.send(messages=[f'---> Send key by name to {name} element not visible or clickable.'])
     except NoSuchElementException:
-        logging.exception(msg=f'Send key to {name} element, no such element.')
+        logging.exception(msg=f'---> Send key to {name} element, no such element.')
+        telegram_send.send(messages=[f'---> Send key to {name} element, no such element.'])
         screenshot(name)
         browser.refresh()
     except WebDriverException:
         logging.exception(msg=f'Webdriver Error for send key to {name} object')
+        telegram_send.send(messages=[f'--> Webdriver Error for send key to {name} object'])
 
 
 def send_key_by_id(obj_id, key):
@@ -501,13 +510,16 @@ def send_key_by_id(obj_id, key):
     try:
         browser.find_element_by_id(obj_id).send_keys(key)
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
-        logging.exception(msg=f'Send key by ID to {obj_id} element not visible or clickable.')
+        logging.exception(msg=f'--> Send key by ID to {obj_id} element not visible or clickable.')
+        telegram_send.send(messages=[f'--> Send key by ID to {obj_id} element not visible or clickable.'])
     except NoSuchElementException:
-        logging.exception(msg=f'Send key by ID to {obj_id} element, no such element')
+        logging.exception(msg=f'--> Send key by ID to {obj_id} element, no such element')
+        telegram_send.send(messages=[f'--> Send key by ID to {obj_id} element, no such element'])
         screenshot(obj_id)
         browser.refresh()
     except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for send key by ID to {obj_id} object')
+        logging.exception(msg=f'--> Webdriver Error for send key by ID to {obj_id} object')
+        telegram_send.send(messages=[f'--> Webdriver Error for send key by ID to {obj_id} object'])
 
 
 def click_by_class(selector):
@@ -519,9 +531,11 @@ def click_by_class(selector):
     try:
         browser.find_element_by_class_name(selector).click()
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
-        logging.exception(msg=f'Send key by class to {selector} element not visible or clickable.')
+        logging.exception(msg=f'--> Send key by class to {selector} element not visible or clickable.')
+        telegram_send.send(messages=['--> Send key by class to {selector} element not visible or clickable.'])
     except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for send key by class to {selector} object')
+        logging.exception(msg=f'--> Webdriver Error for send key by class to {selector} object')
+        telegram_send.send(messages=['--> Webdriver Error for send key by class to {selector} object'])
 
 
 def click_by_id(obj_id):
@@ -533,9 +547,11 @@ def click_by_id(obj_id):
     try:
         browser.find_element_by_id(obj_id).click()
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
-        logging.exception(msg=f'Click by ID to {obj_id} element not visible or clickable.')
+        logging.exception(msg=f'--> Click by ID to {obj_id} element not visible or clickable.')
+        telegram_send.send(messages=['--> Click by ID to {obj_id} element not visible or clickable.'])
     except WebDriverException:
-        logging.exception(msg=f'Webdriver Error for click by ID to {obj_id} object')
+        logging.exception(msg=f'--> Webdriver Error for click by ID to {obj_id} object')
+        telegram_send.send(messages=['--> Webdriver Error for click by ID to {obj_id} object'])
 
 
 def clear_by_id(obj_id):
@@ -547,13 +563,16 @@ def clear_by_id(obj_id):
     try:
         browser.find_element_by_id(obj_id).clear()
     except (ElementNotVisibleException, ElementNotInteractableException):
-        logging.exception(msg=f'Clear by ID to {obj_id} element not visible or clickable.')
+        logging.exception(msg=f'--> Clear by ID to {obj_id} element not visible or clickable.')
+        telegram_send.send(messages=['--> Clear by ID to {obj_id} element not visible or clickable.'])
     except NoSuchElementException:
-        logging.exception(msg=f'Send key by ID to {obj_id} element, no such element')
+        logging.exception(msg=f'--> Send key by ID to {obj_id} element, no such element')
+        telegram_send.send(messages=['--> Send key by ID to {obj_id} element, no such element'])
         screenshot(obj_id)
         browser.refresh()
     except WebDriverException:
-        logging.exception(msg='Error.')
+        logging.exception(msg='--> Error.')
+        telegram_send.send(messages=['--> Error'])
 
 
 def main_window():
@@ -566,8 +585,8 @@ def main_window():
             browser.switch_to.window(browser.window_handles[-1])
             browser.close()
     except WebDriverException:
-        logging.error('Error when switching to main_window')
-        telegram_send.send(messages=['Error when switching to main_window'])
+        logging.error('--> Error when switching to main_window')
+        telegram_send.send(messages=['--> Error when switching to main_window'])
     finally:
         browser.switch_to.window(browser.window_handles[0])
 
@@ -578,7 +597,8 @@ def screenshot(selector):
     :param selector: The name, ID, class, or other attribute of missing node object
     :return: None
     """
-    logging.exception(msg=f'{selector} cannot be located.')
+    logging.exception(msg=f'--> {selector} cannot be located.')
+    telegram_send.send(messages=['--> {selector} cannot be located.'])
     screenshot_file_name = f'{datetime.now().strftime("%Y%m%d%%H%M%S")}_{selector}.png'
     screenshot_file_path = os.path.join('logs', screenshot_file_name)
     browser.save_screenshot(screenshot_file_path)
@@ -608,11 +628,11 @@ def search(search_terms, mobile_search=False):
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
 
-    logging.info(msg="Search Start")
-    telegram_send.send(messages=["Search Start"])
+    logging.info(msg="--> Search Start")
+    telegram_send.send(messages=["--> Search Start"])
     if search_terms == [] or search_terms is None:
-        logging.info(msg="Search Aborted. No Search Terms.")
-        telegram_send.send(messages=["Search Aborted. No Search Terms."])
+        logging.info(msg="--> Search Aborted. No Search Terms.")
+        telegram_send.send(messages=["--> Search Aborted. No Search Terms."])
     else:
         browser.get(BING_SEARCH_URL)
         # ensure signed in not in mobile mode (pc mode doesn't register when searching)
@@ -623,31 +643,31 @@ def search(search_terms, mobile_search=False):
         for num, item in search_terms:
             try:
                 # clears search bar and enters in next search term
+                time.sleep(3)
                 wait_until_visible(By.ID, 'sb_form_q', 15)
                 clear_by_id('sb_form_q')
                 send_key_by_id('sb_form_q', item)
                 time.sleep(0.1)
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
-                logging.debug(msg=f'Search #{num}: {item[:80]}')
-                time.sleep(0.5)
+                logging.debug(msg=f'--> Search #{num}: {item[:80]}')
+                telegram_send.send(messages=[f'--> Search #{num}: {item[:80]}'])
                 time.sleep(random.randint(0, 1))
-                time.sleep(0.1)
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
                     if mobile_search:
                         # in mobile mode, get point total does not work if no search is done, URL = 404
                         if get_point_total(mobile=True):
-                            logging.info(msg=f'Stopped at search number {num}')
-                            telegram_send.send(messages=[f'Stopped at search number {num}'])
+                            logging.info(msg=f'-->Stopped at search number {num}')
+                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         # if point total not met, return to search page
                         browser.get(BING_SEARCH_URL)
                     else:
                         if get_point_total(pc=True):
-                            logging.info(msg=f'Stopped at search number {num}')
-                            telegram_send.send(messages=[f'Stopped at search number {num}'])
+                            logging.info(msg=f'--> Stopped at search number {num}')
+                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         browser.get(BING_SEARCH_URL)
             except UnexpectedAlertPresentException:
@@ -663,8 +683,8 @@ def iter_dailies():
     browser.get(DASHBOARD_URL)
     open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
     if open_offers:
-        logging.info(msg=f'Number of open offers: {len(open_offers)}')
-        telegram_send.send(messages=[f'Number of open offers: {len(open_offers)}'])
+        logging.info(msg=f'--> Number of open offers: {len(open_offers)}')
+        telegram_send.send(messages=[f'--> Number of open offers: {len(open_offers)}'])
         # get common parent element of open_offers
         parent_elements = [open_offer.find_element_by_xpath('..//..//..//..') for open_offer in open_offers]
         # get points links from parent, # finds link (a) descendant of selected node
@@ -675,7 +695,8 @@ def iter_dailies():
         ]
         # iterate through the dailies
         for offer in offer_links:
-            logging.debug(msg='Detected offer.')
+            logging.debug(msg='--> Detected offer.')
+            telegram_send.send(messages=[f'--> Detected offer.'])
             # click and switch focus to latest window
             offer.click()
             latest_window()
@@ -684,7 +705,8 @@ def iter_dailies():
             # check for poll by ID
             time.sleep(1)
             if find_by_id('btoption0'):
-                logging.debug(msg='Poll identified.')
+                logging.debug(msg='--> Poll identified.')
+                telegram_send.send(messages=[f'--> Poll identified.'])
                 daily_poll()
             # check for quiz by checking for ID
             elif (find_by_id('rqStartQuiz') or find_by_id('rqAnswerOptionNum0') or find_by_id('rqAnswerOption0')):
@@ -692,14 +714,17 @@ def iter_dailies():
                     click_by_id('rqStartQuiz')
                 # test for drag or drop or regular quiz
                 if find_by_id('rqAnswerOptionNum0'):
-                    logging.debug(msg='Drag and Drop Quiz identified.')
+                    logging.debug(msg='--> Drag and Drop Quiz identified.')
+                    telegram_send.send(messages=[f'--> Drag and Drop Quiz identified.'])
                     drag_and_drop_quiz()
                 # look for lightning quiz indicator
                 elif find_by_id('rqAnswerOption0'):
-                    logging.debug(msg='Lightning Quiz identified.')
+                    logging.debug(msg='--> Lightning Quiz identified.')
+                    telegram_send.send(messages=[f'--> Lightning Quiz identified.'])
                     lightning_quiz()
             elif find_by_class('wk_Circle'):
-                logging.debug(msg='Click Quiz identified.')
+                logging.debug(msg='--> Click Quiz identified.')
+                telegram_send.send(messages=[f'--> Click Quiz identified.'])
                 click_quiz()
             # else do scroll for exploring pages
             else:
@@ -710,11 +735,11 @@ def iter_dailies():
         time.sleep(0.1)
         wait_until_visible(By.CSS_SELECTOR, "a#reward_pivot_earn > span", 10)
         open_offers = browser.find_elements_by_xpath('//span[contains(@class, "mee-icon-AddMedium")]')
-        logging.info(msg=f'Number of incomplete offers remaining: {len(open_offers)}')
-        telegram_send.send(messages=[f'Number of incomplete offers remaining: {len(open_offers)}'])
+        logging.info(msg=f'--> Number of incomplete offers remaining: {len(open_offers)}')
+        telegram_send.send(messages=[f'--> Number of incomplete offers remaining: {len(open_offers)}'])
     else:
-        logging.info(msg='No dailies found.')
-        telegram_send.send(messages=['No dailies found.'])
+        logging.info(msg='-->  No dailies found.')
+        telegram_send.send(messages=['--> No dailies found.'])
 
 
 def explore_daily():
@@ -729,11 +754,14 @@ def explore_daily():
         # exit to main window
         main_window()
     except TimeoutException:
-        logging.exception(msg='Explore Daily Timeout Exception.')
+        logging.exception(msg='--> xplore Daily Timeout Exception.')
+        telegram_send.send(messages=['--> xplore Daily Timeout Exception.'])
     except (ElementNotVisibleException, ElementClickInterceptedException, ElementNotInteractableException):
-        logging.exception(msg='Element not clickable or visible.')
+        logging.exception(msg='--> Element not clickable or visible.')
+        telegram_send.send(messages=['--> Element not clickable or visible.'])
     except WebDriverException:
-        logging.exception(msg='Error.')
+        logging.exception(msg='----> -> Error.')
+        telegram_send.send(messages=['--> Error.'])
 
 
 def daily_poll():
@@ -845,6 +873,7 @@ def get_point_total(pc=False, mobile=False, log=False):
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
     """
+    telegram_send.send(messages=['--> Check Points'])
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
     # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
@@ -875,14 +904,14 @@ def get_point_total(pc=False, mobile=False, log=False):
 
     # if log flag is provided, log the point totals
     if log:
-        logging.info(msg=f'Total points = {current_point_total}')
-        telegram_send.send(messages=[f'Total points = {current_point_total}'])
-        logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-        telegram_send.send(messages=[f'PC points = {current_pc_points}/{max_pc_points}'])
-        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
-        telegram_send.send(messages=[f'Edge points = {current_edge_points}/{max_edge_points}'])
-        logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
-        telegram_send.send(messages=[f'Mobile points = {current_mobile_points}/{max_mobile_points}'])
+        logging.info(msg=f'--> Total points = {current_point_total}')
+        telegram_send.send(messages=[f'--> Total points = {current_point_total}'])
+        logging.info(msg=f'--> PC points = {current_pc_points}/{max_pc_points}')
+        telegram_send.send(messages=[f'--> PC points = {current_pc_points}/{max_pc_points}'])
+        logging.info(msg=f'--> Edge points = {current_edge_points}/{max_edge_points}')
+        telegram_send.send(messages=[f'--> Edge points = {current_edge_points}/{max_edge_points}'])
+        logging.info(msg=f'--> Mobile points = {current_mobile_points}/{max_mobile_points}')
+        telegram_send.send(messages=[f'--> Mobile points = {current_mobile_points}/{max_mobile_points}'])
 
     # if pc flag, check if pc and edge points met
     if pc:
@@ -931,11 +960,9 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
-    time.sleep(1)
+    telegram_send.send(messages=[f'--> Check EnsurePcLoggedIn'])
     browser.get(BING_LOGOUT)
-    time.sleep(1)
     browser.get(BING_SEARCH_URL)
-    time.sleep(1)
     browser.get(BING_SET_US)
     time.sleep(1)
     if find_by_id('id_s'):
@@ -951,14 +978,12 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
-    time.sleep(1)
+    telegram_send.send(messages=[f'--> Check EnsureMobileLoggedIn'])
     browser.get(BING_LOGOUT)
-    time.sleep(1)
     browser.get(BING_SEARCH_URL)
-    time.sleep(1)
     browser.get(BING_SET_US)
-    time.sleep(1)
     # click on ribbon to ensure logged in
+    time.sleep(1)
     wait_until_visible(By.ID, 'mHamburger', 8)
     time.sleep(1)
     if find_by_id('mHamburger'):
@@ -987,13 +1012,13 @@ if __name__ == '__main__':
 
         # start logging
         init_logging(log_level=parser.log_level)
-        logging.info(msg='-----------------------New------------------------')
-        telegram_send.send(messages=['-----------------------New------------------------'])
+        logging.info(msg='----[Start New Bot Session]----')
+        telegram_send.send(messages=['----[Start New Bot Session]----'])
 
         # get login dict
         login_dict = get_login_info()
-        logging.info(msg='logins retrieved.')
-        telegram_send.send(messages=['logins retrieved.'])
+        logging.info(msg='----[logins retrieved from json]----')
+        telegram_send.send(messages=['----[logins retrieved from json]----'])
 
         # get search terms
         search_list = []
@@ -1014,10 +1039,10 @@ if __name__ == '__main__':
 
             if parser.mobile_mode:
                 # MOBILE MODE
-                logging.info(msg='----Tarne Smartphone-Browser----')
-                telegram_send.send(messages=['----Tarne Smartphone-Browser----'])
+                logging.info(msg='----[MOBILE-MODE]----')
                 # set up headless browser and mobile user agent
                 browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
+                telegram_send.send(messages=['----[MOBILE-MODE]----'])
                 telegram_send.send(messages=['Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330'])
                 try:
                     log_in(email, password)
@@ -1026,8 +1051,8 @@ if __name__ == '__main__':
                         iter_dailies()
                         main_window()
                     except:
-                        logging.info(msg=f'Mobile App Task not found')
-                        telegram_send.send(messages=[f'Mobile App Task not found'])
+                        logging.info(msg=f'--> Mobile App Task not found')
+                        telegram_send.send(messages=[f'--> Mobile App Task not found'])
                     browser.get(BING_SEARCH_URL)
                     # mobile search
                     search(search_list, mobile_search=True)
@@ -1038,16 +1063,17 @@ if __name__ == '__main__':
                 except KeyboardInterrupt:
                     browser.quit()
                 except WebDriverException:
-                    logging.info(msg=f'WebDriverException while executing mobile portion', exc_info=True)
+                    logging.info(msg=f'--> WebDriverException while executing mobile portion', exc_info=True)
+                    telegram_send.send(messages=[f'--> WebDriverException while executing mobile portion'])
                     browser.quit()
 
             if parser.pc_mode or parser.quiz_mode or parser.email_mode:
                 # PC MODE
-                logging.info(msg='----Tarne PC-Browser----')
-                telegram_send.send(messages=['----Tarne PC-Browser----'])
+                logging.info(msg='--> PC-MODE')
                 #ua.update()
                 # set up edge headless browser and edge pc user agent
                 browser = browser_setup(parser.headless_setting, ua.random)
+                telegram_send.send(messages=['--> PC-MODE'])
                 telegram_send.send(messages=[ua.random])
                 try:
                     log_in(email, password)
@@ -1067,8 +1093,10 @@ if __name__ == '__main__':
                 except KeyboardInterrupt:
                     print('Stopping Script...')
                 except WebDriverException:
-                    logging.error(msg=f'WebDriverException while executing pc portion', exc_info=True)
+                    logging.error(msg=f'--> WebDriverException while executing pc portion', exc_info=True)
+                    telegram_send.send(messages=[f'--> WebDriverException while executing pc portion'])
                 finally:
                     browser.quit()
     except WebDriverException:
         logging.exception(msg='Failure at main()')
+        telegram_send.send(messages=[f'Failure at main()'])

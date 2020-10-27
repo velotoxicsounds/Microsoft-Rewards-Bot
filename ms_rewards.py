@@ -320,7 +320,7 @@ def log_in(email_address, pass_word):
     time.sleep(0.5)
 
 def log_in_2(email_address, pass_word):
-    time.sleep(0.5)
+    time.sleep(3)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
@@ -914,13 +914,10 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
-    time.sleep(1)
     browser.get(BING_LOGOUT)
-    time.sleep(1)
     browser.get(BING_SEARCH_URL)
-    time.sleep(1)
     browser.get(BING_SET_US)
-    time.sleep(1)
+    time.sleep(3)
     if find_by_id('id_s'):
         time.sleep(1)
         click_by_id('id_s')
@@ -934,13 +931,10 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
-    time.sleep(1)
     browser.get(BING_LOGOUT)
-    time.sleep(1)
     browser.get(BING_SEARCH_URL)
-    time.sleep(1)
     browser.get(BING_SET_US)
-    time.sleep(1)
+    time.sleep(3)
     # click on ribbon to ensure logged in
     wait_until_visible(By.ID, 'mHamburger', 8)
     time.sleep(1)
