@@ -288,7 +288,7 @@ def log_in(email_address, pass_word):
     time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    time.sleep(5)
+    time.sleep(1)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
@@ -331,7 +331,7 @@ def log_in_2(email_address, pass_word):
     time.sleep(0.5)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    time.sleep(5)
+    time.sleep(1)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
@@ -744,6 +744,7 @@ def daily_poll():
     wait_until_visible(By.ID, 'btoption0', 10)
     choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
+    time.sleep(3) #DONT DELETE!
     # close window, switch to main
     main_window()
 
@@ -830,12 +831,11 @@ def sign_in_prompt():
     sign_in_prompt_msg = find_by_class('bottom')
     if sign_in_prompt_msg:
         logging.info(msg='Detected sign-in prompt')
-        if browser.find_elements_by_link_text('Mit Ihrem Microsoft-Konto anmelden'):
-            browser.find_element_by_link_text('Mit Ihrem Microsoft-Konto anmelden').click()
+        if browser.find_element_by_xpath("//a[@onclick='setsrchusr()']"):
+            browser.find_element_by_xpath("//a[@onclick='setsrchusr()']").click()
         if browser.find_elements_by_link_text('Sign in'):
             browser.find_element_by_link_text('Sign in').click()
         logging.info(msg='Clicked sign-in prompt')
-        telegram_send.send(messages=['Clicked sign-in prompt'])
 
 
 def get_point_total(pc=False, mobile=False, log=False):
@@ -1043,7 +1043,7 @@ if __name__ == '__main__':
                 # PC MODE
                 logging.info(msg='----Tarne PC-Browser----')
                 telegram_send.send(messages=['----Tarne PC-Browser----'])
-                ua.update()
+                #ua.update()
                 # set up edge headless browser and edge pc user agent
                 browser = browser_setup(parser.headless_setting, ua.random)
                 telegram_send.send(messages=[ua.random])
