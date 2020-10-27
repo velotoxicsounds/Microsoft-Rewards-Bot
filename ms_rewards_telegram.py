@@ -280,6 +280,7 @@ def browser_setup(headless_mode, user_agent):
 
 def log_in(email_address, pass_word):
     logging.info(msg=f'Logging in {email_address}...')
+    telegram_send.send(messages=[f'Logging in {email_address}'])
     browser.get('https://login.live.com/')
     time.sleep(0.5)
     # wait for login form and enter email
@@ -325,6 +326,7 @@ def log_in(email_address, pass_word):
 
 def log_in_2(email_address, pass_word):
     time.sleep(0.5)
+    telegram_send.send(messages=[f'Logging in {email_address}'])
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)

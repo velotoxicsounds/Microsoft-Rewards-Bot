@@ -12,6 +12,7 @@ Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written i
 - sign_in_prompt() Revised. NewStyle XPath
 - #ua.update(). Requires timer for maximum every 12h update
 - Login Password TimeSleep Set to 1
+- Add Telegram E-Mail Output
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!

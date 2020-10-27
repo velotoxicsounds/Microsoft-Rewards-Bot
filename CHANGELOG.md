@@ -10,6 +10,7 @@
     - sign_in_prompt() Revised. NewStyle XPath
     - #ua.update(). Requires timer for maximum every 12h update
     - Login Password TimeSleep Set to 1
+    - Add Telegram E-Mail Output
 
 **2020.10.25**
 
