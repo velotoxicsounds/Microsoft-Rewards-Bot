@@ -45,7 +45,7 @@ BING_SET_US = 'https://www.bing.com/?setlang=en'
 _LOG_LEVEL_STRINGS = ['CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG']
 
 # user agents for edge/pc and mobile
-PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 Edg/86.0.622.51')
+PC_USER_AGENT = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 OPR/72.0.3815.186')
 MOBILE_USER_AGENT = ('Mozilla/5.0 (Linux; Android 10; VOG-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Mobile Safari/537.36 EdgA/42.0.92.3330')
 
 
@@ -192,7 +192,7 @@ def get_search_terms():
         except KeyError:
             logging.error('Cannot parse, JSON keys are modified.')
     # get unique terms and return a list
-    logging.info(msg=f'# of search items: {len(search_terms)}\n')
+    logging.info(msg=f'----[of search items: {len(search_terms)}]----')	
     return list(set(search_terms))
 
 
@@ -257,8 +257,6 @@ def browser_setup(headless_mode, user_agent):
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument('--disable-webgl')
     options.add_argument('--no-sandbox')
-    options.add_argument("--disable-extensions")
-    options.add_argument('--disable-dev-shm-usage')
     options.add_experimental_option('w3c', False)
 
     prefs = {
@@ -275,92 +273,88 @@ def browser_setup(headless_mode, user_agent):
     return chrome_obj
 
 def log_in(email_address, pass_word):
-    logging.info(msg=f'Logging in {email_address}...')
+    logging.info(msg=f'----[Logging in {email_address}]----')
+    telegram_send.send(messages=[f'----[Logging in {email_address}]----'])
     browser.get('https://login.live.com/')
-    time.sleep(0.5)
+    time.sleep(0.1)
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
-    time.sleep(0.5)
+    time.sleep(0.1)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    time.sleep(1)
+    time.sleep(0.1)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
-        time.sleep(0.5)
         wait_until_clickable(By.NAME, 'passwd', 10)
         send_key_by_name('passwd', pass_word)
         logging.debug(msg='Sent Password.')
         # wait for 'sign in' button to be clickable and sign in
-        time.sleep(0.5)
+        time.sleep(0.1)
         send_key_by_name('passwd', Keys.RETURN)
-        time.sleep(0.5)
+        time.sleep(0.1)
         # Passwords only require the standard delay
         # Added wait to click Yes to Stay signed in
         if find_by_id('i0116'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('i0116')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
         if find_by_id('i0118'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('i0118')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
     else:
         # If using mobile 2FA, add a longer delay for sign in approval
         wait_until_visible(By.ID, 'uhfLogo', 300)
-
-    time.sleep(0.5)
 
 def log_in_2(email_address, pass_word):
-    time.sleep(3)
+    telegram_send.send(messages=[f'--> Run 2nd Login Phrase'])
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
-    time.sleep(0.5)
+    time.sleep(0.1)
     send_key_by_name('loginfmt', Keys.RETURN)
     logging.debug(msg='Sent Email Address.')
-    time.sleep(1)
 
     if not parser.use_authenticator:
         # wait for password form and enter password
-        time.sleep(0.5)
+        time.sleep(0.1)
         wait_until_clickable(By.NAME, 'passwd', 10)
         send_key_by_name('passwd', pass_word)
         logging.debug(msg='Sent Password.')
         # wait for 'sign in' button to be clickable and sign in
-        time.sleep(0.5)
+        time.sleep(0.1)
         send_key_by_name('passwd', Keys.RETURN)
-        time.sleep(0.5)
+        time.sleep(0.1)
         # Passwords only require the standard delay
         # Added wait to click Yes to Stay signed in
         if find_by_id('i0116'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('i0116')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
         if find_by_id('i0118'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('i0118')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
         if find_by_id('idSIButton9'):
-            time.sleep(1)
+            time.sleep(0.1)
             click_by_id ('idSIButton9')
+        browser.find_element_by_id("sb_form_q").click()  
     else:
         # If using mobile 2FA, add a longer delay for sign in approval
         wait_until_visible(By.ID, 'uhfLogo', 300)
-
-    time.sleep(0.5)
 
 def find_by_id(obj_id):
     """
@@ -398,30 +392,22 @@ def find_by_css(selector):
     return browser.find_elements_by_css_selector(selector)
 
 
-# def wait_until_visible(by_, selector, time_to_wait=10):
-#     """
-#     Wait until all objects matching selector are visible
-#     :param by_: Select by ID, XPATH, CSS Selector, other, from By module
-#     :param selector: string of selector
-#     :param time_to_wait: Int time to wait
-#     :return: None
-#     """
-#     try:
-#         WebDriverWait(browser, time_to_wait).until(ec.visibility_of_element_located((by_, selector)))
-#     except TimeoutException:
-#         logging.exception(msg=f'{selector} element Not Visible - Timeout Exception', exc_info=False)
-#         screenshot(selector)
-#         browser.refresh()
-#     except UnexpectedAlertPresentException:
-#         # FIXME
-#         browser.switch_to.alert.dismiss()
-#         # logging.exception(msg=f'{selector} element Not Visible - Unexpected Alert Exception', exc_info=False)
-#         # screenshot(selector)
-#         # browser.refresh()
-#     except WebDriverException:
-#         logging.exception(msg=f'Webdriver Error for {selector} object')
-#         screenshot(selector)
-#         browser.refresh()
+def wait_until_visible(by_, selector, time_to_wait=10):
+    """
+    Searches for selector and if found, end the loop
+    Else, keep repeating every 2 seconds until time elapsed, then refresh page
+    :param by_: string which tag to search by
+    :param selector: string selector
+    :param time_to_wait: int time to wait
+    :return: Boolean if selector is found
+    """
+    start_time = time.time()
+    while (time.time() - start_time) < time_to_wait:
+        if browser.find_elements(by=by_, value=selector):
+            return True
+        browser.refresh()  # for other checks besides points url
+        time.sleep(10)
+    return False
 
 
 def wait_until_visible(by_, selector, time_to_wait=10):
@@ -593,17 +579,19 @@ def search(search_terms, mobile_search=False):
     :return: None
     """
     if mobile_search:
-        search_limit = 10
+        search_limit = (random.randint(5, 30))
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
     else:
-        search_limit = 15
+        search_limit = (random.randint(5, 30))
         random.shuffle(search_terms)
         search_terms = list(enumerate(search_terms, start=0))
 
-    logging.info(msg="Search Start")
+    logging.info(msg="--> Search Start")
+    telegram_send.send(messages=["--> Search Start"])
     if search_terms == [] or search_terms is None:
-        logging.info(msg="Search Aborted. No Search Terms.")
+        logging.info(msg="--> Search Aborted. No Search Terms.")
+        telegram_send.send(messages=["--> Search Aborted. No Search Terms."])
     else:
         browser.get(BING_SEARCH_URL)
         # ensure signed in not in mobile mode (pc mode doesn't register when searching)
@@ -620,23 +608,23 @@ def search(search_terms, mobile_search=False):
                 time.sleep(0.1)
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
-                logging.debug(msg=f'Search #{num}: {item[:80]}')
-                time.sleep(0.5)
-                time.sleep(random.randint(0, 1))
-                time.sleep(0.1)
+                logging.debug(msg=f'--> Search #{num}: {item[:80]}')
+                telegram_send.send(messages=[f'--> Search #{num}: {item[:80]}'])
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
                     if mobile_search:
                         # in mobile mode, get point total does not work if no search is done, URL = 404
-                        if get_point_total(mobile=True):
-                            logging.info(msg=f'Stopped at search number {num}')
+                        if get_point_total(mobile=True, log=True):
+                            logging.info(msg=f'-->Stopped at search number {num}')
+                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         # if point total not met, return to search page
                         browser.get(BING_SEARCH_URL)
                     else:
-                        if get_point_total(pc=True):
-                            logging.info(msg=f'Stopped at search number {num}')
+                        if get_point_total(pc=True, log=True):
+                            logging.info(msg=f'--> Stopped at search number {num}')
+                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         browser.get(BING_SEARCH_URL)
             except UnexpectedAlertPresentException:
@@ -728,11 +716,11 @@ def daily_poll():
     :return: None
     """
     # click poll option
-    time.sleep(2)
+    time.sleep(0.1)
     wait_until_visible(By.ID, 'btoption0', 10)
     choices = ['btoption0', 'btoption1']  # new poll format
     click_by_id(random.choice(choices))
-    time.sleep(3) #DONT DELETE!
+    time.sleep(0.1) #DONT DELETE!
     # close window, switch to main
     main_window()
 
@@ -772,7 +760,7 @@ def click_quiz():
         # click_by_id('check')
         click_by_class('wk_buttons')
         # if the green check mark reward icon is visible, end loop
-        time.sleep(1)
+        time.sleep(0.1)
         if find_by_css('span[class="wk_SummaryHashTag"]'):
             break
     main_window()
@@ -803,16 +791,17 @@ def drag_and_drop_quiz():
             logging.debug(msg='Unknown Error.')
             continue
         finally:
-            time.sleep(1)
+            time.sleep(0.1)
             if find_by_id('quizCompleteContainer'):
                 break
     # close the quiz completion splash
-    time.sleep(1)
+    time.sleep(0.1)
     quiz_complete = find_by_css('.cico.btCloseBack')
     if quiz_complete:
         quiz_complete[0].click()
-    time.sleep(1)
+    time.sleep(0.1)
     main_window()
+
 
 
 def sign_in_prompt():
@@ -832,23 +821,22 @@ def get_point_total(pc=False, mobile=False, log=False):
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
     """
+    telegram_send.send(messages=['--> Check Points'])
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
     # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
 
     # TODO add a scroll to obj here
-    wait_until_visible(By.CSS_SELECTOR, 'div#userPointsBreakdown > div > div:nth-of-type(2) > h2', 10) # if object not found, return False
+    wait_until_visible(By.XPATH, "//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]", 10)
     # returns None if pc search not found
     # pcsearch = browser.find_element_by_class_name('pcsearch')
     # if pcsearch.location_once_scrolled_into_view is None:  # property causes pc search to be scrolled into area
     #     return False
 
     try:
-        time.sleep(3)
         current_point_total = list(map(
-            int, browser.find_element_by_css_selector('#userBanner > mee-banner > div > div > div > div.info-columns > div:nth-child(3) > mee-banner-slot-4 > mee-rewards-user-status-item > mee-rewards-user-status-dailypoint > div > div > div > div > div > p.bold.number.margin-top-1 > mee-rewards-counter-animation > span > b').text))[0]
+            int, browser.find_element_by_xpath("//div[@id='userBanner']/mee-banner/div/div/div/div[2]/div/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p").text))[0]
         # get pc points
-        time.sleep(3)
         current_pc_points, max_pc_points = map(
             int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / '))
         # get mobile points
@@ -859,25 +847,6 @@ def get_point_total(pc=False, mobile=False, log=False):
             int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
     except ValueError:
         return False
-
-    # if log flag is provided, log the point totals
-    if log:
-        logging.info(msg=f'Total points = {current_point_total}')
-        logging.info(msg=f'PC points = {current_pc_points}/{max_pc_points}')
-        logging.info(msg=f'Edge points = {current_edge_points}/{max_edge_points}')
-        logging.info(msg=f'Mobile points = {current_mobile_points}/{max_mobile_points}')
-
-    # if pc flag, check if pc and edge points met
-    if pc:
-        if current_pc_points < max_pc_points or current_edge_points < max_edge_points:
-        # if current_pc_points < max_pc_points:
-            return False
-        return True
-    # if mobile flag, check if mobile points met
-    if mobile:
-        if current_mobile_points < max_mobile_points:
-            return False
-        return True
 
 
 def get_email_links():
@@ -914,16 +883,29 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
+    telegram_send.send(messages=[f'--> Check EnsurePcLoggedIn'])
     browser.get(BING_LOGOUT)
-    browser.get(BING_SEARCH_URL)
     browser.get(BING_SET_US)
+    wait_until_visible(By.ID, 'id_s', 8) or wait_until_visible(By.ID, 'id_sc', 8)
     time.sleep(3)
-    if find_by_id('id_s'):
+    if browser.find_element_by_link_text('Accept'):
+        browser.find_element_by_link_text("Accept").click()
+    if browser.find_element_by_id('id_s'):
         time.sleep(1)
         click_by_id('id_s')
-    time.sleep(0.5)
-    log_in_2(email, password)
-    time.sleep(5)
+        log_in_2(email, password)
+    elif browser.find_element_by_id('id_sc'):
+        browser.get("https://www.bing.com/?setlang=en")
+        browser.find_element_by_id("id_sc").click()
+        browser.find_element_by_css_selector("span.hbic_chevdown").click()
+        browser.find_element_by_xpath("//div[@id='hbsettree']/a[4]/div/div[2]").click()
+        browser.find_element_by_id("id_p").click()
+        browser.find_element_by_xpath("//ul[@id='b_idProviders']/li/a/span[2]").click()
+        browser.get("https://www.bing.com/?setlang=en")
+        browser.find_element_by_id("sb_form_q").click()
+        ensure_pc_mode_logged_in()
+    else:
+        time.sleep(1)   
 
 def ensure_mobile_mode_logged_in():
     """
@@ -931,13 +913,14 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
+    telegram_send.send(messages=[f'--> Check EnsureMobileLoggedIn'])
     browser.get(BING_LOGOUT)
-    browser.get(BING_SEARCH_URL)
     browser.get(BING_SET_US)
-    time.sleep(3)
     # click on ribbon to ensure logged in
     wait_until_visible(By.ID, 'mHamburger', 8)
-    time.sleep(1)
+    time.sleep(3)
+    if browser.find_element_by_link_text('Accept'):
+        browser.find_element_by_link_text("Accept").click()
     if find_by_id('mHamburger'):
         time.sleep(1)
         click_by_id ('mHamburger')
@@ -945,7 +928,6 @@ def ensure_mobile_mode_logged_in():
         click_by_id ('hb_s')
         time.sleep(1)
         log_in_2(email, password)
-        time.sleep(5)
 
 
 if __name__ == '__main__':
@@ -1018,7 +1000,7 @@ if __name__ == '__main__':
                 logging.info(msg='----Tarne PC-Browser----')
                 #ua.update()
                 # set up edge headless browser and edge pc user agent
-                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 Edg/86.0.622.51')
+                browser = browser_setup(parser.headless_setting, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 OPR/72.0.3815.186')
                 try:
                     log_in(email, password)
                     browser.get(DASHBOARD_URL)

@@ -1,3 +1,18 @@
+**2020.11.04**
+    - Logging Info customized, new text structure
+    - New user agent for PC/EDGE
+    - New login method / cookie query imelemented
+    - Time Sleep re-adjusted, BOT IS NUN SUPER FAST!
+    - Random search count, looks significantly more human
+    - Wait_until_visible activated!
+    - Sleep Timer for Daily Poll customized, BOT SUPER FAST!!
+    - Sleep Timer customized for Click Quiz, BOT SUPER FAST!!
+    - Sleep timer for drag ang drop customized, BOT SUPER FAST!!
+    - Sleep timer for drag ang drop customized, BOT SUPER FAST!!
+    - Points are now read correctly at Level 2 Account - Account Level 1 still needs to be implemented
+    - ensure_pc_mode_logged_in rewritten, BOT SUPER FAST!!
+    - ensure_mobile_mode_logged_in rewritten, BOT SUPER FAST!!
+    - Points are now carried in the log
 **2020.10.26**
     - Second login function built-in for Bing search (name: log_in_2(email_address, pass_word)
     - Microsoft Edge Search works again, new UserAgent is inserted. Idea: implement ua.random as well as filters for Edge Browser useragents
