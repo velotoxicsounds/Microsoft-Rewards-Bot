@@ -1,6 +1,6 @@
 # Microsoft-Rewards-Bot
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
-This version is always the latest and fastest version!
+# This version is always the latest and fastest version!
 ## Last-Update
 **2020.11.04**
 - Logging Info customized, new text structure
@@ -93,5 +93,3 @@ passwords
 For a summary of changes in each version of the bot, please see the
 **[CHANGELOG](CHANGELOG.md).**
 is also available.
-#### Special Thanks
-@ShoGinn - for extraordinary assistance in making this project better!
