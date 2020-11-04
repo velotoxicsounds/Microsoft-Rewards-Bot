@@ -84,7 +84,9 @@ passwords
 - Click Finish
 
 ## To Do
-- NewStyle Coding
+- Account Level 1 Implementation
+- Donation points to family members
+- Family Account Generator
 ## License
 100% free to use and open source. :see_no_evil: :hear_no_evil: :speak_no_evil:
 ## Versions
