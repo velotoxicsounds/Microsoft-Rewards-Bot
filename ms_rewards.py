@@ -274,7 +274,6 @@ def browser_setup(headless_mode, user_agent):
 
 def log_in(email_address, pass_word):
     logging.info(msg=f'----[Logging in {email_address}]----')
-    telegram_send.send(messages=[f'----[Logging in {email_address}]----'])
     browser.get('https://login.live.com/')
     time.sleep(0.1)
     # wait for login form and enter email
@@ -316,7 +315,6 @@ def log_in(email_address, pass_word):
         wait_until_visible(By.ID, 'uhfLogo', 300)
 
 def log_in_2(email_address, pass_word):
-    telegram_send.send(messages=[f'--> Run 2nd Login Phrase'])
     # wait for login form and enter email
     wait_until_clickable(By.NAME, 'loginfmt', 10)
     send_key_by_name('loginfmt', email_address)
@@ -588,10 +586,8 @@ def search(search_terms, mobile_search=False):
         search_terms = list(enumerate(search_terms, start=0))
 
     logging.info(msg="--> Search Start")
-    telegram_send.send(messages=["--> Search Start"])
     if search_terms == [] or search_terms is None:
         logging.info(msg="--> Search Aborted. No Search Terms.")
-        telegram_send.send(messages=["--> Search Aborted. No Search Terms."])
     else:
         browser.get(BING_SEARCH_URL)
         # ensure signed in not in mobile mode (pc mode doesn't register when searching)
@@ -609,7 +605,6 @@ def search(search_terms, mobile_search=False):
                 send_key_by_id('sb_form_q', Keys.RETURN)
                 # prints search term and item, limited to 80 chars
                 logging.debug(msg=f'--> Search #{num}: {item[:80]}')
-                telegram_send.send(messages=[f'--> Search #{num}: {item[:80]}'])
 
                 # check to see if search is complete, if yes, break out of loop
                 if num % search_limit == 0:
@@ -617,14 +612,12 @@ def search(search_terms, mobile_search=False):
                         # in mobile mode, get point total does not work if no search is done, URL = 404
                         if get_point_total(mobile=True, log=True):
                             logging.info(msg=f'-->Stopped at search number {num}')
-                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         # if point total not met, return to search page
                         browser.get(BING_SEARCH_URL)
                     else:
                         if get_point_total(pc=True, log=True):
                             logging.info(msg=f'--> Stopped at search number {num}')
-                            telegram_send.send(messages=[f'--> Stopped at search number {num}'])
                             return
                         browser.get(BING_SEARCH_URL)
             except UnexpectedAlertPresentException:
@@ -821,7 +814,6 @@ def get_point_total(pc=False, mobile=False, log=False):
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
     """
-    telegram_send.send(messages=['--> Check Points'])
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
     # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
@@ -883,7 +875,6 @@ def ensure_pc_mode_logged_in():
     # click on ribbon to ensure logged in
     # wait_until_clickable(By.ID, 'id_l', 15)
     # click_by_id('id_l')
-    telegram_send.send(messages=[f'--> Check EnsurePcLoggedIn'])
     browser.get(BING_LOGOUT)
     browser.get(BING_SET_US)
     wait_until_visible(By.ID, 'id_s', 8) or wait_until_visible(By.ID, 'id_sc', 8)
@@ -913,7 +904,6 @@ def ensure_mobile_mode_logged_in():
     PC mode for some reason sometimes does not fully recognize that the user is logged in
     :return: None
     """
-    telegram_send.send(messages=[f'--> Check EnsureMobileLoggedIn'])
     browser.get(BING_LOGOUT)
     browser.get(BING_SET_US)
     # click on ribbon to ensure logged in
