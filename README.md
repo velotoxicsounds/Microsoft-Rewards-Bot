@@ -2,20 +2,20 @@
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 ## Last-Update
 **2020.11.04**
-    - Logging Info customized, new text structure
-    - New user agent for PC/EDGE
-    - New login method / cookie query imelemented
-    - Time Sleep re-adjusted, BOT IS NUN SUPER FAST!
-    - Random search count, looks significantly more human
-    - Wait_until_visible activated!
-    - Sleep Timer for Daily Poll customized, BOT SUPER FAST!!
-    - Sleep Timer customized for Click Quiz, BOT SUPER FAST!!
-    - Sleep timer for drag ang drop customized, BOT SUPER FAST!!
-    - Sleep timer for drag ang drop customized, BOT SUPER FAST!!
-    - Points are now read correctly at Level 2 Account - Account Level 1 still needs to be implemented
-    - ensure_pc_mode_logged_in rewritten, BOT SUPER FAST!!
-    - ensure_mobile_mode_logged_in rewritten, BOT SUPER FAST!!
-    - Points are now carried in the log
+- Logging Info customized, new text structure
+- New user agent for PC/EDGE
+- New login method / cookie query imelemented
+- Time Sleep re-adjusted, BOT IS NUN SUPER FAST!
+- Random search count, looks significantly more human
+- Wait_until_visible activated!
+- Sleep Timer for Daily Poll customized, BOT SUPER FAST!!
+- Sleep Timer customized for Click Quiz, BOT SUPER FAST!!
+- Sleep timer for drag ang drop customized, BOT SUPER FAST!!
+- Sleep timer for drag ang drop customized, BOT SUPER FAST!!
+- Points are now read correctly at Level 2 Account - Account Level 1 still needs to be implemented
+- ensure_pc_mode_logged_in rewritten, BOT SUPER FAST!!
+- ensure_mobile_mode_logged_in rewritten, BOT SUPER FAST!!
+- Points are now carried in the log
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
@@ -39,48 +39,48 @@ This program will automatically complete search requests and quizzes on Microsof
 ## How to Use#
 1.  Clone and navigate to repo
 2.  Modify `ms_rewards_login_dict.json` with your account names and passwords,
-    remove `.example` from filename.
+remove `.example` from filename.
 3.  Enter into cmd/terminal/shell: `pip install -r requirements.txt`
-    - This installs dependencies (selenium)
-    Setup Telegramchatbot: 
+- This installs dependencies (selenium)
+Setup Telegramchatbot: 
 	- Enter into LINUX terminal/shell: `sudo telegram-send --configure --global-config && telegram-send --configure`
-    - Enter into WINDOWS CMD: `telegram-send --configure --global-config && telegram-send --configure`
+- Enter into WINDOWS CMD: `telegram-send --configure --global-config && telegram-send --configure`
 	- Follow Instruction to Set-Up Telegram Bot 
 4.  Enter into cmd/terminal/shell: `python ms_rewards.py --headless --mobile --pc --quiz`
-    - enter `-h` or `--help` for more instructions
-    - `--headless` is for headless mode
-    - `--mobile` is for mobile search
-    - `--pc` is for pc search
-    - `--quiz` is for quiz search
-    - `-a` or `--all` is short for mobile, pc, and quiz search
-    - `--authenticator` use Microsoft Authenticator prompts instead of
-        passwords
-        - **When using Microsoft Authenticator:**
-        - Headless mode is always disabled
-        - Respond to the prompt within 90 seconds and Approve the sign in request - Learn how to use and download the app at <https://go.microsoft.com/fwlink/?linkid=871853>
-    - Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
-    - Script by default will run in interactive mode
-    - Run time for one account is under 5 minutes, for 100% daily completion
-    - If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
+- enter `-h` or `--help` for more instructions
+- `--headless` is for headless mode
+- `--mobile` is for mobile search
+- `--pc` is for pc search
+- `--quiz` is for quiz search
+- `-a` or `--all` is short for mobile, pc, and quiz search
+- `--authenticator` use Microsoft Authenticator prompts instead of
+passwords
+- **When using Microsoft Authenticator:**
+- Headless mode is always disabled
+- Respond to the prompt within 90 seconds and Approve the sign in request - Learn how to use and download the app at <https://go.microsoft.com/fwlink/?linkid=871853>
+- Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
+- Script by default will run in interactive mode
+- Run time for one account is under 5 minutes, for 100% daily completion
+- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
 5.  For completing points from email links:
-    - Modify email_links.txt file with email links. - Copy and paste links without surrounding quotes, each on individual line, like such:
-          httplink2
-          httplink3
-    - Enter cmd/terminal/shell argument `python ms_rewards.py --email`
-    - **Script will be manual, requires key press to continue, as the quizzes
-      are not yet standardized.**
+- Modify email_links.txt file with email links. - Copy and paste links without surrounding quotes, each on individual line, like such:
+  httplink2
+  httplink3
+- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
+- **Script will be manual, requires key press to continue, as the quizzes
+  are not yet standardized.**
 6.  Crontab (Optional for automated script daily on linux)
-    - Enter in terminal: `crontab -e`
-    - Enter in terminal: `0 12 * * * /path/to/python /path/to/ms_rewards.py --headless --mobile --pc --quiz`
-      - Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
-      - Change the paths to the json in the .py file to appropriate path
+- Enter in terminal: `crontab -e`
+- Enter in terminal: `0 12 * * * /path/to/python /path/to/ms_rewards.py --headless --mobile --pc --quiz`
+  - Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
+  - Change the paths to the json in the .py file to appropriate path
 7.  Add the Bat file to your Windows Task Scheduler (Optional for automated script daily on Windows)
-    - Start Windows Task Schedule
-    - Click "Create A Simple Task"
-    - Name: MS-RewardBot
-    - Change to Daily
-    - Click Continue until you arrive at "Select Program"
-    - Click Finish
+- Start Windows Task Schedule
+- Click "Create A Simple Task"
+- Name: MS-RewardBot
+- Change to Daily
+- Click Continue until you arrive at "Select Program"
+- Click Finish
 
 ## To Do
 - NewStyle Coding
