@@ -1,6 +1,6 @@
 #TO-DO
-#
-#
+# Check ALl Quiz, Timeout After Complete
+# click_quiz - ERROR random.choice(choices).click() ISSUE: https://github.com/velotoxicsounds/Microsoft-Rewards-Bot/issues/6
 
 import argparse
 import json
