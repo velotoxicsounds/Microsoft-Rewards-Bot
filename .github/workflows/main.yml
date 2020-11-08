@@ -1,0 +1,5 @@
+- name: TelegramBridge
+  uses: GokulDas027/TelegramBridge@1.2
+
+- name: Telegram Action
+  uses: xinthink/action-telegram@v1.1
