@@ -1,5 +1,5 @@
 ## Microsoft-Rewards-Bot
-## This version is always the latest and fastest version!
+## Version from https://github.com/velotoxicsounds/Microsoft-Rewards-Bot is always the latest and fastest version!
 
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 
