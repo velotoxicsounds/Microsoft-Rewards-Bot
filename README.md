@@ -1,6 +1,7 @@
-# Microsoft-Rewards-Bot
-Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
-# This version is always the latest and fastest version!
+## Microsoft-Rewards-Bot
+## This version is always the latest and fastest version!
+## Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
+
 ## Last-Update
 **2020.11.08**
 - Fixed bug: get_point_total works again 
@@ -8,6 +9,7 @@ Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written i
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
+
 ## Features
 - Completes PC search, Edge search, Mobile search via user agents
 - Retrieves top daily searches via Google Trends' API
@@ -18,6 +20,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Logs errors and info by default, can log executed commands and search terms by changing the log level to DEBUG
 - Tested and confirmed working for U.S. and U.K., GERMANY (more to come!)
 - Telegram-Integration
+
 ## Requirements
 - Python 3.6
 - Requests 2.21.0
@@ -25,6 +28,7 @@ This program will automatically complete search requests and quizzes on Microsof
 - Chrome Browser
 - telegram-send
 - fake-useragent
+
 ## How to Use#
 1.  Clone and navigate to repo
 2.  Modify `ms_rewards_login_dict.json` with your account names and passwords,
@@ -75,8 +79,11 @@ passwords
 - Account Level 1 Implementation
 - Donation points to family members
 - Family Account Generator
+- Code Restyle
+
 ## License
 100% free to use and open source. :see_no_evil: :hear_no_evil: :speak_no_evil:
+
 ## Versions
 For a summary of changes in each version of the bot, please see the
 **[CHANGELOG](CHANGELOG.md).**
