@@ -2,7 +2,6 @@
 #
 #
 
-import reorder_python_imports
 import argparse
 import json
 import logging
