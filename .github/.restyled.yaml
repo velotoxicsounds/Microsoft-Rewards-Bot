@@ -34,33 +34,11 @@ labels: []
 ignore_labels:
   - restyled-ignore
 
-restylers_version: stable
+restylers_version: dev
 
 restylers:
-	image: 'restyled/restyler-autopep8:v1.4.4-2'
-	command:
-	  - autopep8
-	  - '--in-place'
-	arguments: []
-	include:
-	  - '**/*.py'
-	interpreters:
-	  - python
-	image: 'restyled/restyler-prettier:v2.0.2-2'
-	command:
-	  - prettier
-	  - '--write'
-	arguments: []
-	include:
-	  - '**/*.yml'
-	  - '**/*.yaml'
-	interpreters: []
-	image: 'restyled/restyler-reorder-python-imports:v1.6.0'
-	command:
-	  - reorder-python-imports
-	  - '--exit-zero-even-if-changed'
-	arguments: []
-	include:
-	  - '**/*.py'
-	interpreters:
-	  - python
+	- reorder-python-imports
+	- autopep8
+	- black
+	- isort
+	- "*"

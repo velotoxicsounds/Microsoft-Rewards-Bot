@@ -5,3 +5,4 @@ lxml
 beautifulsoup4
 telegram-send
 fake-useragent
+reorder-python-imports
