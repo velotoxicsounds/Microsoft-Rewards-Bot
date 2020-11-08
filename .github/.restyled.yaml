@@ -20,21 +20,21 @@ commit_template: |
   Restyled by ${restyler.name}
 pull_requests: true
 
-comments: true
+comments: false
 
 statuses:
   differences: true
   no_differences: true
   error: true
 
-request_review: author
+request_review: none
 
 labels: []
 
 ignore_labels:
   - restyled-ignore
 
-restylers_version: dev
+restylers_version: stable
 
 restylers:
 	- reorder-python-imports
