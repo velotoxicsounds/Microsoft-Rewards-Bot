@@ -32,14 +32,14 @@ updates:
 
   # Maintain dependencies for pip
   - package-ecosystem: pip
-  directory: "/"
-  schedule:
+    directory: "/"
+    schedule:
     interval: daily
     allow:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
-  open-pull-requests-limit: 10
-  commit-message:
+    open-pull-requests-limit: 10
+    commit-message:
     prefix: "pip prod"
     prefix-development: "pip dev"
     include: "scope"
