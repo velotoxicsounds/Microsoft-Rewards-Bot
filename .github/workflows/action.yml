@@ -10,7 +10,7 @@ inputs:
     description: 'The target architecture (x86, x64) of the Python interpreter.'
   token:
     description: Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
-    default: ${{ github.token }}
+    default: ${{ secrets.GITHUB_TOKEN }}
 outputs:
   python-version:
     description: "The installed python version. Useful when given a version range as input."
