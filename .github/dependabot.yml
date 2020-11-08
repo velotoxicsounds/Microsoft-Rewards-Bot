@@ -40,6 +40,6 @@ updates:
       - dependency-type: "all"
     open-pull-requests-limit: 10
     commit-message:
-    prefix: "pip prod"
-    prefix-development: "pip dev"
-    include: "scope"
+        prefix: "pip prod"
+        prefix-development: "pip dev"
+        include: "scope"
