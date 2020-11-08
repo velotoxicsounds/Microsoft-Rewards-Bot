@@ -4,6 +4,7 @@ email_links.txt
 
 # virtualenv
 VIRTUALENV/
+env/
 
 # Output artifacts
 drivers/
