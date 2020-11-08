@@ -1,6 +1,7 @@
 ## Microsoft-Rewards-Bot
 ## This version is always the latest and fastest version!
-## Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
+
+Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 
 ## Last-Update
 **2020.11.08**
