@@ -12,24 +12,6 @@ updates:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
 
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    allow:
-      # Allow both direct and indirect updates for all packages
-      - dependency-type: "all"
-
-  # Maintain dependencies for Composer
-  - package-ecosystem: "composer"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    allow:
-      # Allow both direct and indirect updates for all packages
-      - dependency-type: "all"
-
   # Maintain dependencies for pip
   - package-ecosystem: pip
     directory: "/"
