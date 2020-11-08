@@ -3,16 +3,16 @@ name: 'Setup Python'
 description: 'Set up a specific version of Python and add the command-line tools to the PATH.'
 author: 'GitHub'
 inputs:
-  python-version: '3.6'
-    description: "Version range or exact version of a Python version to use, using SemVer's version range syntax."
+  python-version:
+    description: ""
     default: '3.x'
-  architecture: 'x64'
+  architecture:
     description: 'The target architecture (x86, x64) of the Python interpreter.'
-  token: '${{ secrets.GITHUB_TOKEN }}'
-    description: Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
-    default: ${{ github.token }}
+  token:
+    description: 'Used to pull python distributions from actions/python-versions. Since theres a default, this is typically not supplied by the user.'
+    default: ${{ secrets.GITHUB_TOKEN }}
 outputs:
-  python-version: '3.6'
+  python-version:
     description: "The installed python version. Useful when given a version range as input."
 runs:
   using: 'node12'
