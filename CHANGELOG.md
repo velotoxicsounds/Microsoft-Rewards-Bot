@@ -1,3 +1,8 @@
+**2020.11.08**
+    - Fixed bug: get_point_total works again 
+    - Started to rewrite XPath
+
+
 **2020.11.04**
     - Logging Info customized, new text structure
     - New user agent for PC/EDGE

@@ -2,21 +2,9 @@
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 # This version is always the latest and fastest version!
 ## Last-Update
-**2020.11.04**
-- Logging Info customized, new text structure
-- New user agent for PC/EDGE
-- New login method / cookie query imelemented
-- Time Sleep re-adjusted, BOT IS NUN SUPER FAST!
-- Random search count, looks significantly more human
-- Wait_until_visible activated!
-- Sleep Timer for Daily Poll customized, BOT SUPER FAST!!
-- Sleep Timer customized for Click Quiz, BOT SUPER FAST!!
-- Sleep timer for drag ang drop customized, BOT SUPER FAST!!
-- Sleep timer for drag ang drop customized, BOT SUPER FAST!!
-- Points are now read correctly at Level 2 Account - Account Level 1 still needs to be implemented
-- ensure_pc_mode_logged_in rewritten, BOT SUPER FAST!!
-- ensure_mobile_mode_logged_in rewritten, BOT SUPER FAST!!
-- Points are now carried in the log
+**2020.11.08**
+    - Fixed bug: get_point_total works again 
+    - Started to rewrite XPath
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!

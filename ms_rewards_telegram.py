@@ -1,12 +1,6 @@
-#! /usr/lib/python3.6
-# ms_rewards.py - Searches for results via pc bing browser and mobile, completes quizzes on pc bing browser
-# Version 2019.07.13
-
-# TODO replace sleeps with minimum sleeps for explicit waits to work, especially after a page redirect
-# FIXME mobile version does not require re-sign in, but pc version does, why?
-# FIXME Known Cosmetic Issue - logged point total caps out at the point cost of the item on wishlist
-# ADD Cookie Acception to Ensure PC LOGIN
-
+#TO-DO
+#
+#
 
 import argparse
 import json
@@ -859,18 +853,19 @@ def sign_in_prompt():
         logging.info(msg='Clicked sign-in prompt')
 
 
-def get_point_total(pc=False, mobile=False, log=False):
+def get_point_total(pc=False, mobile=False, log=True):
     """
     Checks for points for pc/edge and mobile, logs if flag is set
     :return: Boolean for either pc/edge or mobile points met
     """
     telegram_send.send(messages=['--> Check Points'])
+    logging.info(msg=f'--> Check Points')
     browser.get(POINT_TOTAL_URL)
     # get number of total number of points
     # wait_until_visible(By.XPATH, '//*[@id="flyoutContent"]', 10)  # check for loaded point display
 
     # TODO add a scroll to obj here
-    wait_until_visible(By.XPATH, "//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]", 10)
+    time.sleep(4)
     # returns None if pc search not found
     # pcsearch = browser.find_element_by_class_name('pcsearch')
     # if pcsearch.location_once_scrolled_into_view is None:  # property causes pc search to be scrolled into area
@@ -878,16 +873,16 @@ def get_point_total(pc=False, mobile=False, log=False):
 
     try:
         current_point_total = list(map(
-            int, browser.find_element_by_xpath("//div[@id='userBanner']/mee-banner/div/div/div/div[2]/div/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p").text))[0]
+            int, browser.find_element_by_xpath("//div/div/div/p/b").text))[0]
         # get pc points
         current_pc_points, max_pc_points = map(
             int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / '))
         # get mobile points
         current_mobile_points, max_mobile_points = map(
-            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
+            int, browser.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Mobile Suche'])[1]/following::p[1]").text.split(' / ', 1))
         # get edge points
         current_edge_points, max_edge_points = map(
-            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / ', 1))
+            int, browser.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Microsoft Edge-Bonus'])[1]/following::p[1]").text.split(' / ', 1))
     except ValueError:
         return False
 
@@ -913,7 +908,6 @@ def get_point_total(pc=False, mobile=False, log=False):
         if current_mobile_points < max_mobile_points:
             return False
         return True
-
 
 def get_email_links():
     """
