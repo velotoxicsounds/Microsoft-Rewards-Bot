@@ -34,7 +34,7 @@ updates:
   - package-ecosystem: pip
     directory: "/"
     schedule:
-    interval: daily
+        interval: "daily"
     allow:
       # Allow both direct and indirect updates for all packages
       - dependency-type: "all"
