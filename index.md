@@ -1,37 +1,94 @@
-## Welcome to GitHub Pages
+### HOW TO CODE
+### https://guides.github.com/features/mastering-markdown/
 
-You can use the [editor on GitHub](https://github.com/velotoxicsounds/Microsoft-Rewards-Bot/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Microsoft-Rewards-Bot
+## Version from https://github.com/velotoxicsounds/Microsoft-Rewards-Bot is always the latest and fastest version!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 
-### Markdown
+## Last-Update
+**2020.11.08**
+- Fixed bug: get_point_total works again 
+- Started to rewrite XPath
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Overview
+This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
 
-```markdown
-Syntax highlighted code block
+## Features
+- Completes PC search, Edge search, Mobile search via user agents
+- Retrieves top daily searches via Google Trends' API
+- Completes polls, all types of quizzes (multiple choice, click and drag and reorder), and explore dailies
+- Headless mode (Confirmed working on DigitalOcean linux droplet)
+- Supports unlimited accounts via JSON, in randomized order.
+- Randomized search speeds
+- Logs errors and info by default, can log executed commands and search terms by changing the log level to DEBUG
+- Tested and confirmed working for U.S. and U.K., GERMANY (more to come!)
+- Telegram-Integration
 
-# Header 1
-## Header 2
-### Header 3
+## Requirements
+- Python 3.6
+- Requests 2.21.0
+- Selenium 3.14.0
+- Chrome Browser
+- telegram-send
+- fake-useragent
 
-- Bulleted
-- List
+## How to Use#
+1.  Clone and navigate to repo
+2.  Modify `ms_rewards_login_dict.json` with your account names and passwords,
+remove `.example` from filename.
+3.  Enter into cmd/terminal/shell: `pip install -r requirements.txt`
+- This installs dependencies (selenium)
+Setup Telegramchatbot: 
+	- Enter into LINUX terminal/shell: `sudo telegram-send --configure --global-config && telegram-send --configure`
+- Enter into WINDOWS CMD: `telegram-send --configure --global-config && telegram-send --configure`
+	- Follow Instruction to Set-Up Telegram Bot 
+4.  Enter into cmd/terminal/shell: `python ms_rewards.py --headless --mobile --pc --quiz`
+- enter `-h` or `--help` for more instructions
+- `--headless` is for headless mode
+- `--mobile` is for mobile search
+- `--pc` is for pc search
+- `--quiz` is for quiz search
+- `-a` or `--all` is short for mobile, pc, and quiz search
+- `--authenticator` use Microsoft Authenticator prompts instead of
+passwords
+- **When using Microsoft Authenticator:**
+- Headless mode is always disabled
+- Respond to the prompt within 90 seconds and Approve the sign in request - Learn how to use and download the app at <https://go.microsoft.com/fwlink/?linkid=871853>
+- Script by default will execute mobile, pc, edge, searches, and complete quizzes for all accounts (can change this setting in the .py file)
+- Script by default will run in interactive mode
+- Run time for one account is under 5 minutes, for 100% daily completion
+- If python environment variable is not set, enter `/path/to/python/executable ms_rewards.py`
+5.  For completing points from email links:
+- Modify email_links.txt file with email links. - Copy and paste links without surrounding quotes, each on individual line, like such:
+  httplink2
+  httplink3
+- Enter cmd/terminal/shell argument `python ms_rewards.py --email`
+- **Script will be manual, requires key press to continue, as the quizzes
+  are not yet standardized.**
+6.  Crontab (Optional for automated script daily on linux)
+- Enter in terminal: `crontab -e`
+- Enter in terminal: `0 12 * * * /path/to/python /path/to/ms_rewards.py --headless --mobile --pc --quiz`
+  - Can change the time from 12am server time to whenever the MS daily searches reset (~12am PST)
+  - Change the paths to the json in the .py file to appropriate path
+7.  Add the Bat file to your Windows Task Scheduler (Optional for automated script daily on Windows)
+- Start Windows Task Schedule
+- Click "Create A Simple Task"
+- Name: MS-RewardBot
+- Change to Daily
+- Click Continue until you arrive at "Select Program"
+- Click Finish
 
-1. Numbered
-2. List
+## To Do
+- Account Level 1 Implementation
+- Donation points to family members
+- Family Account Generator
+- Code Restyle
 
-**Bold** and _Italic_ and `Code` text
+## License
+100% free to use and open source. :see_no_evil: :hear_no_evil: :speak_no_evil:
 
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/velotoxicsounds/Microsoft-Rewards-Bot/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## Versions
+For a summary of changes in each version of the bot, please see the
+**[CHANGELOG](CHANGELOG.md).**
+is also available.
