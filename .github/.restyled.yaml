@@ -37,8 +37,8 @@ ignore_labels:
 restylers_version: stable
 
 restylers:
-	- reorder-python-imports
-	- autopep8
-	- black
-	- isort
-	- "*"
+ - reorder-python-imports
+ - autopep8
+ - black
+ - isort
+ - "*"
