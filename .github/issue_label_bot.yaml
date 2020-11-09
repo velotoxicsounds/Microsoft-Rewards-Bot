@@ -1,4 +1,4 @@
 label-alias:
-  bug: 'kind/bug'
-  feature_request: 'enhancement'
-  question: 'question'
+  bug: 'PRIO-BUG'
+  feature_request: 'FeatureRequest'
+  question: 'UserQuestion'
