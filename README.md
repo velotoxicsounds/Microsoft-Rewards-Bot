@@ -1,4 +1,5 @@
 ## Microsoft-Rewards-Bot
+[![CodeFactor](https://www.codefactor.io/repository/github/velotoxicsounds/microsoft-rewards-bot/badge/master)](https://www.codefactor.io/repository/github/velotoxicsounds/microsoft-rewards-bot/overview/master)
 ## Version from https://github.com/velotoxicsounds/Microsoft-Rewards-Bot is always the latest and fastest version!
 
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
