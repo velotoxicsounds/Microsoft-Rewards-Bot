@@ -1,6 +1,7 @@
 #TO-DO
 # Check ALl Quiz, Timeout After Complete
 # click_quiz - ERROR random.choice(choices).click() ISSUE: https://github.com/velotoxicsounds/Microsoft-Rewards-Bot/issues/6
+# get_point_total - current_point_total - NEED Correct Read
 
 import argparse
 import json
