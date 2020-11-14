@@ -827,7 +827,7 @@ def get_point_total(pc=False, mobile=False, log=True):
             int, browser.find_element_by_xpath("//div/div/div/p/b").text))[0]
         # get pc points
         current_pc_points, max_pc_points = map(
-            int, browser.find_element_by_xpath("//div[@id='userPointsBreakdown']/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]").text.split(' / '))
+            int, browser.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Desktop Suche'])[1]/following::p[1]").text.split(' / '))
         # get mobile points
         current_mobile_points, max_mobile_points = map(
             int, browser.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Mobile Suche'])[1]/following::p[1]").text.split(' / ', 1))

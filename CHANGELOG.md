@@ -1,3 +1,7 @@
+**2020.11.14**
+
+    - Fixed bug: get_point_total works again 
+
 **2020.11.08**
 
     - Fixed bug: get_point_total works again 

@@ -5,9 +5,9 @@
 Microsoft Rewards (Bing Rewards) Bot - Completes searches and quizzes, written in Python! :raised_hands:
 
 ## Last-Update
-**2020.11.08**
-- Fixed bug: get_point_total works again 
-- Started to rewrite XPath
+**2020.11.14**
+
+    - Fixed bug: get_point_total works again 
 
 ## Overview
 This program will automatically complete search requests and quizzes on Microsoft Rewards! Search terms are the daily top searches retrieved using Google Trends' API. This bot runs selenium in headless mode for deployment on VPS and for increased performance on local machines. The bot also uses selenium's user agent options to fulfill points for all three platforms (pc, edge browser, mobile). 100% free to use and open source. Code critique/feedback and contributions welcome!
