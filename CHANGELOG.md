@@ -1,11 +1,12 @@
 **2020.11.14**
 
-    - Fixed bug: get_point_total works again 
+    - Fixed bug: get_point_total works again
 
 **2020.11.08**
 
-    - Fixed bug: get_point_total works again 
+    - Fixed bug: get_point_total works again
     - Started to rewrite XPath
+
 **2020.11.04**
 
     - Logging Info customized, new text structure
@@ -22,7 +23,7 @@
     - ensure_pc_mode_logged_in rewritten, BOT SUPER FAST!!
     - ensure_mobile_mode_logged_in rewritten, BOT SUPER FAST!!
     - Points are now carried in the log
-    
+
 **2020.10.26**
 
     - Second login function built-in for Bing search (name: log_in_2(email_address, pass_word)
@@ -39,43 +40,55 @@
     - Telegram version now outputs DEBUG data. (TextFormat implemented)
     - Time Sleep removed from Ensure_mobile_mode_logged_in/ensure_pc_mode_logged_in, faster login
     - Login2 function TimeSleep extended for the correct finding of the elements
+
 **2020.10.25**
 
     - Login Fixed [USE NOW ID LOCATOR], Read Points FIX [USE NOW XPATH], OPEN ERROR: Unlimited Mobile Searches, Need Useragent FIX
+
 **2020-09-27**
 
     - General code revision. Telegram Bot. Fix for registration query, PC points FIX, mobile points FIX, EDGE points FIX, PC fakeuseragent random integrated
+
 **2019-07-09**
 
     - Fixed sporadic crashes caused by geolocation requests
+
 **2019-07-02**
 
     - Fixed browser refresh loop caused by login errors
     - Fixed password-based login in headless mode
+
 **2019-06-25**
 
     - Added support for 2FA, passwordless login via Microsoft Authenticator
+
 **2019-04-03**
 
     - Added fix for wait_until_visible from .find_element to .find_elements
+
 **2019-04-02**
 
     - Added adreo00's code for setting log level with argparse
+
 **2019-04-01**
 
     - Added fix for detecting pcpoints element during point status check
     - Removed edge points as the status screen no longer displays them
+
 **2019-03-01**
 
     - Incorporated ShoGinn's lightning quiz fix
     - Fixed .cico quiz close patch
     - Added const for logging level
+
 **2019-02-02**
 
     - Fixed open offer link to target the link
+
 **2019-02-01**
 
     - Added chromedriver auto-downloading
+
 **2019-01-29**
 
     - Added error handling for 'credits2', function should exit and script should continue to execute.
@@ -84,6 +97,7 @@
         - Appears to use less RAM than firefox (suprisingly..)
         - May be possible to run on raspberrypi (rpi has chromedriver)
     - Mitigated credits2 error by performing an action before going to search URL
+
 **2018-12-20**
 
     - Performance improvements
@@ -93,11 +107,13 @@
     - Updated quizzes to log open quiz offers, completed quiz offers, all points
     - Modified error catching for alerts, combined with timeoutexception
     - Misc fixes
+
 **2018-11-28**
 
     - Fixed issue with daily poll IDs changing
     - Added check for sign-in prompt after click on a quiz
     - Misc fixes
+
 **2018-10-20**
 
     - Added argparse
@@ -106,6 +122,7 @@
     - Reworked newsapi.org API to google trends
     - Fixed logging
     - Fixed issue with dropped searches
+
 **2018-10-08**
 
     - Initial release
