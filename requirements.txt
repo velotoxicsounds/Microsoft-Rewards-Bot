@@ -1,6 +1,6 @@
 selenium==3.141.0
 requests==2.26.0
-urllib3==1.26.6
+urllib3==1.26.7
 lxml
 beautifulsoup4
 telegram-send
