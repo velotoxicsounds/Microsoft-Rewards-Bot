@@ -1,4 +1,4 @@
-selenium==4.2.0
+selenium==4.3.0
 requests==2.28.0
 urllib3==1.26.9
 lxml
