@@ -1,5 +1,5 @@
 selenium==4.3.0
-requests==2.28.0
+requests==2.28.1
 urllib3==1.26.9
 lxml
 beautifulsoup4
