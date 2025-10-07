@@ -43,7 +43,7 @@ jobs:
         # that includes the dependencies
         echo "::set-env name=CODEQL_PYTHON::$(which python)"
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v4
       with:
         languages: python
         # Override the default behavior so that the action doesn't attempt 
